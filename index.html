@@ -366,9 +366,6 @@ details.guide-prompt .prompt-box{max-height:38vh;border-radius:0}
 .tam-calc-right strong small{font-size:14px;color:var(--muted)}
 .tam-calc-right p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
 .tam-honest{margin:14px 2px 0;font-size:13.5px;line-height:1.6;color:var(--muted)}
-/* Live embedded ElevenLabs widget */
-elevenlabs-convai{position:fixed;left:20px;right:auto;bottom:20px;z-index:80}
-@media(max-width:640px){elevenlabs-convai{left:12px;bottom:64px}}
 .live-band{margin-top:26px;border-radius:22px;background:var(--ink);color:#fff;padding:24px;display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:center;box-shadow:var(--shadow)}
 @media(prefers-color-scheme:dark){.live-band{background:#e9f5ee;color:#101613}}
 @media(max-width:820px){.live-band{grid-template-columns:1fr}}
@@ -385,7 +382,7 @@ elevenlabs-convai{position:fixed;left:20px;right:auto;bottom:20px;z-index:80}
   .deck{height:auto;overflow:visible;scroll-snap-type:none}
   .slide{height:auto;min-height:0;overflow:visible;page-break-after:always;padding:20px}
   .topbar{position:static}
-  .dots,.slide-nav,.counter,elevenlabs-convai{display:none}
+  .dots,.slide-nav,.counter{display:none}
 }
 </style>
 </head>
@@ -447,9 +444,9 @@ elevenlabs-convai{position:fixed;left:20px;right:auto;bottom:20px;z-index:80}
 
     <div class="live-band" id="live-coach">
       <div>
-        <span class="live-dot" style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase"><i aria-hidden="true" style="width:9px;height:9px;border-radius:50%;background:#34d399;display:inline-block"></i> Live · Embedded on this page</span>
-        <h3 class="serif">The coach is live right here. No new tab, no install.</h3>
-        <p>The ElevenLabs voice agent is embedded into this page. Tap the <strong>call button at the bottom-left</strong> of your screen (or the button below), allow the microphone, and you are straight into a roleplay with the buyer. It runs on the same Creator pool: 275 agent minutes a month, about 55 five-minute drills.</p>
+        <span class="live-dot" style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase"><i aria-hidden="true" style="width:9px;height:9px;border-radius:50%;background:#34d399;display:inline-block"></i> Live · Its own page</span>
+        <h3 class="serif">The coach is live on its own page. No new tab, no install.</h3>
+        <p>The ElevenLabs voice agent lives on a dedicated coach page on this site. Tap the button below, allow the microphone, and you are straight into a roleplay with the buyer. It runs on the same Creator pool: 275 agent minutes a month, about 55 five-minute drills.</p>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
           <button class="btn btn-primary" onclick="startLiveCoach()">Start a live voice drill</button>
           <button class="btn" style="background:transparent;color:inherit;border:1px solid currentColor" onclick="goToSlide(3)">Open the companion dashboard</button>
@@ -462,7 +459,7 @@ elevenlabs-convai{position:fixed;left:20px;right:auto;bottom:20px;z-index:80}
           <li>“Give me the CMO in Indonesia, on local creative.”</li>
           <li>“Pause” at any point for a coach tip, “Score me” to get marked.</li>
         </ul>
-        <p style="margin:10px 0 0;font-size:13px;opacity:.85">Call button not appearing? <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_6901m72efzwhff4s8tsx9c9rcna7" target="_blank" rel="noopener">Open the coach on ElevenLabs instead</a>.</p>
+        <p style="margin:10px 0 0;font-size:13px;opacity:.85">The coach lives on its own page: <a href="coach.html">Talk to the coach</a>. Prefer ElevenLabs directly? <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_6901m72efzwhff4s8tsx9c9rcna7" target="_blank" rel="noopener">Open it on ElevenLabs instead</a>.</p>
       </div>
     </div>
   </div>
@@ -693,10 +690,10 @@ elevenlabs-convai{position:fixed;left:20px;right:auto;bottom:20px;z-index:80}
           <p style="margin:0;text-align:center;font-size:13.5px;opacity:.85">Sales Objection Coach • ElevenAgents<br>Call it, or switch to Chat on the ElevenLabs page.</p>
           <div class="guide-quote"><span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;opacity:.75">It opens with</span><br>“Hi, I am the guide for the Sales Objection Coach. Want a 60 second tour, or do you want to try one objection with the Singapore CFO right now?”</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
-            <button class="btn" style="background:var(--accent);color:#fff" onclick="startLiveCoach()">Call AI agent — live on this page</button>
+            <button class="btn" style="background:var(--accent);color:#fff" onclick="startLiveCoach()">Talk to the coach — its own page</button>
             <button class="btn" style="background:transparent;color:inherit;border:1px solid currentColor" id="copyGuideLinkBtn">Copy guide link</button>
           </div>
-          <p style="font-size:12.5px;opacity:.75;margin:12px 0 0">The agent is embedded on this page: the call opens in the widget at the bottom-left, so allow the microphone here when asked. Prefer typing? Open the widget and use its chat, or run the text tour on the right.</p>
+          <p style="font-size:12.5px;opacity:.75;margin:12px 0 0">The coach lives on its own page: the call opens there, so allow the microphone when asked. Prefer typing? Use the chat on the coach page, or run the text tour on the right.</p>
           <p class="guide-allow"><b>On Creator tonight: 4 hrs 35 mins of coaching.</b><br>275 agent minutes this month. Every live call, tour and try-out with this guide draws from that same pool, so a 1-minute tour costs a minute and a 5-minute drill costs five.</p>
         </div>
         <div class="guide-main">
@@ -827,7 +824,7 @@ End every conversation after the feedback questions, unless they ask to try anot
             <strong>Second person joins the call</strong><br><span id="secondPersonText"><strong>Singapore Procurement Lead joins:</strong> “If CFO is asking on price, I need the breakdown, SLA and two references as well. Price alone won't clear my review.”</span>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
-            <button class="btn" style="background:var(--accent);color:#fff" onclick="startLiveCoach()">Open voice call — on this page</button>
+            <button class="btn" style="background:var(--accent);color:#fff" onclick="startLiveCoach()">Open voice call — coach page</button>
             <button class="btn" style="background:#fff;color:#111" id="nextExchangeBtn">Buyer pushes back → Next exchange</button>
           </div>
           <p style="font-size:12.5px;opacity:.75;margin:10px 0 0">In Escalation mode, each Next exchange raises the pressure. At Exchange 3 the buyer brings someone else into the room.</p>
@@ -1573,19 +1570,11 @@ renderPersonas(); renderFilters(); renderLibrary(); renderDetail(); resetDrill()
 </script>
 
 <script>
-/* Start the embedded ElevenLabs coach from any button on the page */
+/* Open the dedicated coach page from any button on the deck */
 function startLiveCoach(){
-  var widget=document.getElementById('liveCoachWidget');
-  if(widget && typeof widget.startConversation==='function'){
-    try{ widget.startConversation(); return; }catch(e){ /* fall through to hint */ }
-  }
-  toast('Tap the call button at the bottom-left of the page to start the live coach');
+  window.location.href='coach.html';
 }
 window.startLiveCoach=startLiveCoach;
 </script>
-
-<!-- ElevenLabs Conversational AI — live coach, embedded on this page -->
-<elevenlabs-convai id="liveCoachWidget" agent-id="agent_6901m72efzwhff4s8tsx9c9rcna7"></elevenlabs-convai>
-<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 </body>
 </html>
