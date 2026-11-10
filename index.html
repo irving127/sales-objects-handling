@@ -1,0 +1,1591 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>Sales Objection Coach — ElevenLabs Roleplay Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --bg2:#f6f7f3; --surface:#ffffff; --surface2:#eef2ec;
+  --ink:#101613; --muted:#5b6b60; --line:#e2e8e0; --line2:#d1dcd1;
+  --accent:#0f766e; --accent2:#134e4a; --amber:#b45309; --amber-bg:#fff7ed;
+  --teal-bg:#ecfdf5; --rose:#be123c; --radius:16px;
+  --shadow:0 8px 30px rgba(16,22,19,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0c1210; --bg2:#111a16; --surface:#151f1a; --surface2:#1c2a23; --ink:#eef5f0; --muted:#9ab0a2; --line:#24332b; --line2:#2d4237; --accent:#2dd4bf; --accent2:#99f6e4; --amber:#fbbf24; --amber-bg:#2a2110; --teal-bg:#0f2e29; --shadow:0 8px 30px rgba(0,0,0,.35); }
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:"DM Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow:hidden}
+a{color:var(--accent)}
+.serif{font-family:"DM Serif Display",Georgia,serif;font-weight:400;letter-spacing:-.02em}
+.mono{font-family:"JetBrains Mono",monospace}
+/* --- Deck / slides --- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;border-bottom:1px solid var(--line);background:var(--bg)}
+.topbar-in{max-width:1180px;margin:0 auto;padding:13px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.topbar strong{font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.topbar span{font-size:13px;color:var(--muted);background:var(--bg2);border:1px solid var(--line);padding:6px 10px;border-radius:999px}
+.deck{height:100dvh;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain}
+.slide{min-height:100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;padding:78px 20px 92px;display:flex;flex-direction:column;justify-content:safe center;scrollbar-width:thin}
+.slide-inner{max-width:1180px;margin:0 auto;width:100%}
+.slide-num{display:inline-flex;align-items:center;gap:8px;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--accent);background:var(--teal-bg);border:1px solid #a7f3d0;border-radius:999px;padding:5px 11px;margin-bottom:14px}
+.slide h2.slide-title{font-size:clamp(28px,4vw,38px);line-height:1.05;margin:0}
+.slide-sub{color:var(--muted);margin:8px 0 0;max-width:680px;font-size:15px}
+.block{margin-top:26px}
+.block:first-of-type{margin-top:20px}
+.block-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.block-head h3{font-size:22px;line-height:1.1;margin:0}
+.block-head p{color:var(--muted);margin:5px 0 0;max-width:640px;font-size:14.5px}
+/* --- Slide progress UI --- */
+.counter{position:fixed;top:60px;right:16px;z-index:50;font-family:"JetBrains Mono",monospace;font-size:12.5px;font-weight:600;background:var(--ink);color:var(--bg);border-radius:999px;padding:6px 12px;box-shadow:var(--shadow)}
+.dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:10px}
+.dot-nav{width:12px;height:12px;border-radius:50%;border:2px solid var(--accent);background:transparent;cursor:pointer;padding:0}
+.dot-nav.active{background:var(--accent)}
+.dot-nav:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.slide-nav{position:fixed;right:16px;bottom:16px;z-index:50;display:flex;gap:8px}
+.nav-btn{width:46px;height:46px;border-radius:50%;border:1px solid var(--line2);background:var(--surface);color:var(--ink);font-size:19px;line-height:1;cursor:pointer;box-shadow:var(--shadow);display:grid;place-items:center}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn:disabled{opacity:.35;cursor:default}
+.nav-btn:disabled:hover{border-color:var(--line2);color:var(--ink)}
+@media(max-width:640px){
+  /* Reserved chrome: deck sits between the topbar and a solid bottom bar,
+     so the counter, dots and arrows never overlay slide content. */
+  .topbar-in{padding:12px 16px}
+  .topbar span{display:none}
+  .counter{top:9px;right:12px}
+  .deck{position:fixed;top:48px;bottom:52px;left:0;right:0;height:auto}
+  .slide{padding:22px 16px 28px}
+  .dots{top:auto;bottom:0;left:0;right:0;height:52px;transform:none;flex-direction:row;justify-content:center;align-items:center;background:var(--bg);border-top:1px solid var(--line)}
+  .slide-nav{bottom:4px;right:10px}
+  div.toast{bottom:64px}
+}
+/* --- Shared components (from the one-pager) --- */
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:start}
+@media(max-width:820px){.hero{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(42px,6vw,72px);line-height:.92;margin:8px 0 16px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p.lead{font-size:18px;line-height:1.5;color:var(--muted);max-width:620px;margin:0}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--teal-bg);color:var(--accent2);border:1px solid #a7f3d0;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:700}
+.hero-card{background:var(--ink);color:#fff;border-radius:20px;padding:22px}
+@media(prefers-color-scheme:dark){.hero-card{background:#e8f5ee;color:#0c1210}}
+.hero-card h3{margin:0 0 6px;font-size:15px}
+.hero-card p{margin:0;font-size:14px;opacity:.85;line-height:1.5}
+.stats{display:flex;gap:10px;margin-top:18px}
+.stat{flex:1;background:rgba(255,255,255,.12);border-radius:12px;padding:12px}
+@media(prefers-color-scheme:dark){.stat{background:rgba(0,0,0,.08)}}
+.stat b{display:block;font-size:22px;line-height:1}
+.stat span{font-size:12px;opacity:.8}
+.btn{appearance:none;border:0;cursor:pointer;font-weight:700;border-radius:999px;padding:11px 18px;font-size:14px}
+.btn-primary{background:var(--accent);color:white}
+.btn-secondary{background:var(--surface);color:var(--ink);border:1px solid var(--line2)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.quick-picks{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.quick-picks span{width:100%;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.personas{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:540px){.personas{grid-template-columns:1fr}}
+.persona{border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:18px;text-align:left;cursor:pointer;transition:.15s}
+.persona.active{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset, var(--shadow);background:var(--teal-bg)}
+.persona h3{margin:8px 0 4px;font-size:17px}
+.persona p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:white;font-size:15px}
+.tag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:4px 7px;border-radius:999px;background:var(--bg2);border:1px solid var(--line)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:13px;color:var(--ink)}
+.chip.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.library{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start}
+@media(max-width:860px){.library{grid-template-columns:1fr}}
+.obj-list{display:flex;flex-direction:column;gap:8px;max-height:430px;overflow-y:auto;padding-right:4px;scrollbar-width:thin}
+@media(max-width:860px){.obj-list{max-height:300px}}
+.obj-item{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:14px;text-align:left;cursor:pointer;width:100%;color:var(--ink)}
+.obj-item.active{border-color:var(--accent);background:var(--teal-bg)}
+.obj-item strong{display:block;font-size:14.5px;line-height:1.35}
+.obj-item span{font-size:12.5px;color:var(--muted)}
+.detail{border:1px solid var(--line);border-radius:20px;background:var(--surface);padding:22px;box-shadow:var(--shadow)}
+.detail blockquote{margin:0;font-size:22px;line-height:1.25;font-family:"DM Serif Display",serif}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.box{border-radius:14px;padding:14px}
+.box-teal{background:var(--teal-bg);border:1px solid #a7f3d0}
+.box-amber{background:var(--amber-bg);border:1px solid #fde68a}
+.box h4{margin:0 0 6px;font-size:12px;letter-spacing:.07em;text-transform:uppercase}
+.box p{margin:0;font-size:14px}
+.script{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+.script p{margin:0;font-size:15px;line-height:1.6}
+.drill{border-radius:22px;overflow:hidden;border:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr}
+@media(max-width:860px){.drill{grid-template-columns:1fr}}
+.drill-left{background:var(--ink);color:white;padding:24px}
+@media(prefers-color-scheme:dark){.drill-left{background:#e9f5ee;color:#101613}}
+.drill-right{background:var(--surface);padding:24px}
+.chat{display:flex;flex-direction:column;gap:10px;min-height:180px}
+.bubble{max-width:92%;padding:12px 14px;border-radius:16px;font-size:14.5px;line-height:1.5}
+.bubble.buyer{background:rgba(255,255,255,.14);align-self:flex-start;border-bottom-left-radius:4px}
+@media(prefers-color-scheme:dark){.bubble.buyer{background:rgba(0,0,0,.08)}}
+.bubble.you{background:white;color:#111;border:1px solid var(--line);align-self:flex-end;border-bottom-right-radius:4px}
+.bubble.coach{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;align-self:stretch;max-width:100%}
+textarea{width:100%;border:1px solid var(--line2);border-radius:14px;padding:14px;font:inherit;font-size:15px;background:var(--bg);color:var(--ink);resize:vertical;min-height:110px}
+.scorebars{display:grid;gap:10px;margin-top:14px}
+.bar-row{display:grid;grid-template-columns:110px 1fr 28px;gap:10px;align-items:center;font-size:13px}
+.bar{height:8px;background:var(--bg2);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--accent)}
+.frameworks{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:800px){.frameworks{grid-template-columns:1fr}}
+.fw{border:1px solid var(--line);border-radius:18px;padding:18px;background:var(--surface)}
+.fw h3{margin:0 0 6px}
+.fw ol{margin:8px 0 0 18px;padding:0;font-size:14px;color:var(--muted)}
+.build{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start}
+@media(max-width:860px){.build{grid-template-columns:1fr}}
+.prompt-box{background:#0f172a;color:#e2e8f0;border-radius:18px;padding:18px;overflow:auto;max-height:52vh}
+.prompt-box pre{white-space:pre-wrap;font-family:"JetBrains Mono",monospace;font-size:12.8px;line-height:1.65;margin:0}
+.steps{display:flex;flex-direction:column;gap:10px}
+.step{display:flex;gap:12px;border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--surface)}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--accent);color:white;display:grid;place-items:center;font-weight:800;flex-shrink:0;font-size:14px}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th,.table td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.table th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.slide-foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:60}
+.toast.show{opacity:1}
+label{font-size:13px;font-weight:700}
+select{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px}
+@media(max-width:640px){.score-table thead{display:none}.score-table,.score-table tbody,.score-table tr,.score-table td{display:block;width:100%}.score-table tr{border-bottom:1px solid var(--line);padding:6px 0}.score-table td{border-bottom:0;padding:6px 14px}.score-table td:first-child{font-size:15px;padding-top:10px}}
+.table-scroll{overflow-x:auto;max-width:100%;scrollbar-width:thin}
+.cheat-table{min-width:520px}
+/* Voice guide */
+.guide-panel{border:1px solid var(--line2);border-radius:22px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);display:grid;grid-template-columns:.92fr 1.08fr}
+@media(max-width:860px){.guide-panel{grid-template-columns:1fr}}
+.guide-live{background:var(--ink);color:#fff;padding:26px;display:flex;flex-direction:column}
+@media(prefers-color-scheme:dark){.guide-live{background:#e9f5ee;color:#101613}}
+.guide-live .live-dot{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.guide-live .live-dot i{width:9px;height:9px;border-radius:50%;background:#34d399;display:inline-block}
+.orb-wrap{display:flex;justify-content:center;padding:22px 0 8px}
+.orb{width:118px;height:118px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#5eead4 0%,#0f766e 42%,#134e4a 78%);box-shadow:0 0 0 10px rgba(45,212,191,.14),0 18px 36px rgba(0,0,0,.25);position:relative}
+.orb::after{content:"";position:absolute;inset:18px 22px auto auto;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.35)}
+@media(prefers-reduced-motion:no-preference){.orb{animation:orbPulse 3.2s ease-in-out infinite}@keyframes orbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}}
+.guide-quote{background:rgba(255,255,255,.12);border-radius:14px;padding:14px;font-size:14.5px;line-height:1.55;margin-top:14px}
+@media(prefers-color-scheme:dark){.guide-quote{background:rgba(0,0,0,.07)}}
+.guide-main{padding:24px}
+.tour-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+@media(max-width:640px){.tour-steps{grid-template-columns:1fr}}
+.tour-step{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--bg2)}
+.tour-step b{display:block;font-size:22px;line-height:1;color:var(--accent)}
+.tour-step strong{display:block;margin:7px 0 4px;font-size:14.5px}
+.tour-step p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}
+.say-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.guide-chat{border:1px solid var(--line);border-radius:16px;background:var(--bg);padding:14px;margin-top:14px;min-height:118px;display:flex;flex-direction:column;gap:9px}
+.guide-chat .bubble.buyer{background:var(--teal-bg);color:var(--ink);border:1px solid #a7f3d0}
+.guide-chat .bubble.you{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+details.guide-prompt{margin-top:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}
+details.guide-prompt summary{cursor:pointer;padding:15px 18px;font-weight:700;font-size:15px}
+details.guide-prompt summary span{color:var(--muted);font-weight:500;font-size:13px;display:block;margin-top:2px}
+details.guide-prompt .prompt-box{max-height:38vh;border-radius:0}
+/* Coaching allowance */
+.allowance-note{margin-top:16px;background:rgba(255,255,255,.14);border-radius:12px;padding:12px}
+@media(prefers-color-scheme:dark){.allowance-note{background:rgba(0,0,0,.08)}}
+.allowance-note .allow-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.allowance-note .allow-head span{font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;opacity:.8}
+.allowance-note .allow-head b{font-size:15px;white-space:nowrap}
+.allowance-note p{font-size:13.5px;margin-top:4px}
+.meter{height:8px;border-radius:999px;background:rgba(255,255,255,.28);overflow:hidden;margin-top:10px}
+@media(prefers-color-scheme:dark){.meter{background:rgba(0,0,0,.14)}}
+.meter i{display:block;height:100%;width:100%;background:#34d399;border-radius:999px}
+.guide-allow{margin:12px 0 0;font-size:13px;line-height:1.5;background:rgba(255,255,255,.12);border-radius:12px;padding:11px 12px}
+@media(prefers-color-scheme:dark){.guide-allow{background:rgba(0,0,0,.07)}}
+.guide-allow b{font-size:14px}
+.tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.tier-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:540px){.tier-grid{grid-template-columns:1fr}}
+.tier-card{border:1px solid var(--line);border-radius:18px;padding:18px;background:var(--surface)}
+.tier-card.current{border-color:var(--accent);background:var(--teal-bg);box-shadow:0 0 0 2px var(--accent) inset,var(--shadow)}
+.tier-card .tier-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.tier-card h3{margin:10px 0 2px;font-size:17px}
+.tier-card .hours{font-size:30px;line-height:1;font-weight:800;letter-spacing:-.02em;margin-top:10px}
+.tier-card .hours small{font-size:14px;font-weight:600;color:var(--muted)}
+.tier-card p{margin:6px 0 0;font-size:13.5px;color:var(--muted);line-height:1.5}
+.tier-card .mins{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ink)}
+.calc-bar{margin-top:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:16px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.calc-bar strong{font-size:15px}
+.calc-bar p{margin:0;font-size:14px;color:var(--muted)}
+.calc-result{font-size:15px}
+.calc-result b{color:var(--accent);font-size:18px}
+/* Companion dashboard */
+.companion{border:1px solid var(--line2);border-radius:22px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1fr}
+@media(max-width:900px){.companion{grid-template-columns:1fr}}
+.comp-live{background:var(--ink);color:#fff;padding:22px;display:flex;flex-direction:column}
+@media(prefers-color-scheme:dark){.comp-live{background:#e9f5ee;color:#101613}}
+.comp-live-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.live-badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.live-badge i{width:9px;height:9px;border-radius:50%;background:#f59e0b;display:block}
+.comp-buyer{display:flex;gap:12px;align-items:center;margin-top:16px;background:rgba(255,255,255,.12);border-radius:14px;padding:12px}
+@media(prefers-color-scheme:dark){.comp-buyer{background:rgba(0,0,0,.07)}}
+.comp-buyer .avatar{flex-shrink:0}
+.comp-quote{font-family:"DM Serif Display",serif;font-size:20px;line-height:1.3;margin:14px 0 0}
+.comp-feed{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.comp-feed .bubble{max-width:100%}
+.esc-steps{display:flex;gap:6px;margin-top:14px}
+.esc-step{flex:1;text-align:center;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 4px;border-radius:999px;background:rgba(255,255,255,.14);opacity:.6}
+.esc-step.on{opacity:1;background:var(--accent);color:#fff}
+.second-person{margin-top:12px;border:1px dashed rgba(255,255,255,.5);border-radius:14px;padding:12px;font-size:13.5px;line-height:1.5}
+@media(prefers-color-scheme:dark){.second-person{border-color:rgba(0,0,0,.25)}}
+.comp-main{padding:22px}
+.comp-selects{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:540px){.comp-selects{grid-template-columns:1fr}}
+.comp-selects select{width:100%}
+.meter-row{margin-top:14px}
+.meter-row-head{display:flex;justify-content:space-between;align-items:baseline}
+.meter-row-head label{font-size:14px}
+.meter-row-head b{font-size:14px}
+.meter-track{height:12px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:6px}
+.meter-track i{display:block;height:100%;background:var(--accent);transition:width .25s ease;border-radius:999px}
+.pips{display:flex;gap:6px;margin-top:7px}
+.pip{width:34px;height:28px;border-radius:999px;border:1px solid var(--line2);background:var(--surface);cursor:pointer;font-size:12px;font-weight:700;color:var(--muted)}
+.pip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tip-card{margin-top:16px;border:1px solid #fde68a;background:var(--amber-bg);border-radius:16px;padding:16px}
+.tip-card h4{margin:0 0 8px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--amber)}
+.tip-card ol{margin:0 0 0 18px;padding:0;font-size:14px;line-height:1.55}
+.tip-card ol li{margin-bottom:6px}
+.toggle-btn{display:inline-flex;align-items:center;gap:8px}
+.toggle-btn .dot{width:36px;height:20px;border-radius:999px;background:var(--line2);position:relative;flex-shrink:0}
+.toggle-btn .dot::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.15s}
+.toggle-btn[aria-pressed="true"] .dot{background:var(--accent)}
+.toggle-btn[aria-pressed="true"] .dot::after{left:19px}
+/* Progress */
+.progress-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:16px;align-items:start}
+@media(max-width:860px){.progress-grid{grid-template-columns:1fr}}
+.log-card,.insight-card{border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:20px}
+.range-row{display:grid;grid-template-columns:92px 1fr 32px;gap:10px;align-items:center;margin-top:12px;font-size:13.5px}
+.range-row input[type=range]{width:100%;accent-color:var(--accent)}
+.weakest-banner{border-radius:14px;padding:14px;background:#fff1f2;border:1px solid #fecdd3}
+@media(prefers-color-scheme:dark){.weakest-banner{background:#2a1218;border-color:#4c1d28}}
+.weakest-banner b{color:var(--rose)}
+.avg-bars{display:grid;gap:9px;margin-top:12px}
+.chart-wrap{border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:18px;margin-top:16px;overflow:hidden}
+.history-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.history-item{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13.5px;background:var(--bg2);flex-wrap:wrap}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:18px;height:3px;display:inline-block;border-radius:999px}
+/* Voice configurator */
+.voice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+@media(max-width:900px){.voice-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:540px){.voice-grid{grid-template-columns:1fr}}
+.voice-card{border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:16px;text-align:left;cursor:pointer;transition:.15s;width:100%;color:var(--ink)}
+.voice-card.active{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset,var(--shadow);background:var(--teal-bg)}
+.voice-card h3{margin:8px 0 2px;font-size:16px;line-height:1.25}
+.voice-card p{margin:0;font-size:13px;color:var(--muted);line-height:1.45}
+.voice-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.voice-meta span{font-size:11px;font-weight:700;letter-spacing:.02em;padding:5px 7px;border-radius:999px;background:var(--bg2);border:1px solid var(--line)}
+.voice-panel{border:1px solid var(--line2);border-radius:22px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);display:grid;grid-template-columns:.95fr 1.05fr}
+@media(max-width:900px){.voice-panel{grid-template-columns:1fr}}
+.voice-profile{padding:24px;background:var(--bg2);border-right:1px solid var(--line)}
+@media(max-width:900px){.voice-profile{border-right:0;border-bottom:1px solid var(--line)}}
+.voice-avatar-lg{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;flex-shrink:0}
+.voice-sample{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:15px;line-height:1.55}
+.voice-sample span{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;color:var(--accent);margin-bottom:6px}
+.dna-row{display:grid;grid-template-columns:92px 1fr 30px;gap:10px;align-items:center;font-size:13px;margin-top:9px}
+.dna-track{height:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.dna-track i{display:block;height:100%;background:var(--accent)}
+.voice-controls{padding:24px}
+.voice-controls h3{margin:0;font-size:16px}
+.slider-row{margin-top:16px}
+.slider-row-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.slider-row-head label{font-size:14px}
+.slider-row-head output{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700;color:var(--accent)}
+.slider-row p{margin:3px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.slider-row input[type=range]{width:100%;accent-color:var(--accent);margin-top:7px}
+.voice-output{background:#0f172a;color:#e2e8f0;border-radius:14px;padding:14px;margin-top:18px}
+.voice-output pre{white-space:pre-wrap;font-family:"JetBrains Mono",monospace;font-size:12.5px;line-height:1.6;margin:0}
+.voice-compare{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+.voice-compare th,.voice-compare td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.voice-compare th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+@media(max-width:700px){.voice-compare thead{display:none}.voice-compare,.voice-compare tbody,.voice-compare tr,.voice-compare td{display:block;width:100%}.voice-compare tr{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;padding:6px 0;background:var(--surface)}.voice-compare td{border-bottom:0;padding:5px 12px}}
+.wave{display:flex;gap:3px;align-items:flex-end;height:28px;margin-top:12px}
+.wave i{display:block;width:5px;border-radius:999px;background:var(--accent)}
+/* Market numbers */
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.metric-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.metric-grid{grid-template-columns:1fr}}
+.metric-card{border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--surface);position:relative;overflow:hidden}
+.metric-card::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--accent)}
+.metric-card:nth-child(3n+2)::before{background:#f59e0b}
+.metric-card:nth-child(3n)::before{background:#e11d48}
+.metric-card .num{font-size:29px;line-height:1;font-weight:800;letter-spacing:-.02em}
+.metric-card .num small{font-size:14px;font-weight:600;color:var(--muted)}
+.metric-card h3{margin:8px 0 4px;font-size:15.5px}
+.metric-card p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.roi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.roi-strip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.roi-strip{grid-template-columns:1fr}}
+.roi-strip .metric-card .num{font-size:24px}
+.src{display:block;margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5}
+.src a{color:var(--accent);text-decoration:underline}
+.market-sub{margin:22px 0 12px;font-size:19px}
+.honest-note{margin-top:14px;border:1px solid #fde68a;background:var(--amber-bg);border-radius:16px;padding:14px 16px;font-size:13.5px;line-height:1.6}
+.honest-note strong{display:block;margin-bottom:4px}
+.before-table th,.before-table td{padding:8px 12px;font-size:13.5px}
+@media(max-width:640px){.before-table thead{display:none}.before-table,.before-table tbody,.before-table tr,.before-table td{display:block;width:100%}.before-table tr{border-bottom:1px solid var(--line);padding:6px 0}.before-table td{border-bottom:0;padding:6px 14px}.before-table td:first-child{font-size:15px;padding-top:10px}}
+/* Fun layer */
+.ticker{overflow:hidden;background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 0;margin-bottom:22px}
+.ticker-track{display:flex;gap:18px;align-items:center;white-space:nowrap;width:max-content;font-size:13px;font-weight:700;letter-spacing:.02em}
+.ticker-track i{font-style:normal;color:#34d399}
+@media(prefers-reduced-motion:no-preference){.ticker-track{animation:tickerMove 30s linear infinite}@keyframes tickerMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}}
+.fun-kicker{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);background:var(--teal-bg);border:1px solid #a7f3d0;border-radius:999px;padding:6px 11px;margin-bottom:10px}
+.fun-sub{display:block;font-size:13.5px;font-weight:500;color:var(--muted);letter-spacing:0;text-transform:none;margin-top:3px}
+@media(prefers-reduced-motion:no-preference){.persona{transition:transform .15s ease}.persona:hover{transform:translateY(-3px) rotate(-.5deg)}.pill{animation:pillBob 3.4s ease-in-out infinite}@keyframes pillBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}}
+.tam-wrap{border:2px solid var(--ink);border-radius:22px;background:var(--bg2);padding:20px;box-shadow:6px 6px 0 var(--accent)}
+@media(prefers-color-scheme:dark){.tam-wrap{box-shadow:6px 6px 0 rgba(45,212,191,.35)}}
+.tam-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline;margin-bottom:14px}
+.tam-head strong{font-size:19px}.tam-head span{font-size:13.5px;color:var(--muted)}
+.tam-funnel{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch}
+@media(max-width:860px){.tam-funnel{grid-template-columns:1fr}}
+.tam-level{border-radius:16px;padding:16px;border:1px solid var(--line2);display:flex;flex-direction:column}
+.tam-l1{background:var(--ink);color:#fff}
+@media(prefers-color-scheme:dark){.tam-l1{background:#e9f5ee;color:#101613}}
+.tam-l1 .src,.tam-l1 p{color:inherit;opacity:.88}.tam-l1 .src a{color:inherit}
+.tam-l2{background:var(--amber-bg);border-color:#fde68a}
+.tam-l3{background:var(--teal-bg);border-color:#a7f3d0}
+.tam-label{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.tam-num{font-size:clamp(26px,3.4vw,38px);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin:6px 0}
+.tam-num small{font-size:15px;font-weight:600;opacity:.75}
+.tam-level p{margin:0;font-size:13.5px;line-height:1.55}
+.tam-calc{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.tam-calc{grid-template-columns:1fr}}
+.tam-calc-left,.tam-calc-right{border-radius:16px;padding:16px;background:var(--surface);border:1px solid var(--line)}
+.tam-calc-left label{font-size:15px}
+.tam-slider-row{display:flex;gap:12px;align-items:center;margin-top:10px}
+.tam-slider-row input[type=range]{flex:1;accent-color:var(--accent)}
+.tam-slider-row output{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);white-space:nowrap}
+.tam-level-name{margin:8px 0 0;font-size:13.5px;color:var(--muted)}
+.tam-calc-right span{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tam-calc-right strong{display:block;font-size:clamp(24px,3.4vw,34px);line-height:1.1;margin:6px 0;letter-spacing:-.02em}
+.tam-calc-right strong small{font-size:14px;color:var(--muted)}
+.tam-calc-right p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.tam-honest{margin:14px 2px 0;font-size:13.5px;line-height:1.6;color:var(--muted)}
+/* Live embedded ElevenLabs widget */
+elevenlabs-convai{position:fixed;left:20px;right:auto;bottom:20px;z-index:80}
+@media(max-width:640px){elevenlabs-convai{left:12px;bottom:64px}}
+.live-band{margin-top:26px;border-radius:22px;background:var(--ink);color:#fff;padding:24px;display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:center;box-shadow:var(--shadow)}
+@media(prefers-color-scheme:dark){.live-band{background:#e9f5ee;color:#101613}}
+@media(max-width:820px){.live-band{grid-template-columns:1fr}}
+.live-band h3{margin:8px 0 6px;font-size:clamp(22px,3vw,30px);line-height:1.1}
+.live-band p{margin:0;font-size:14.5px;line-height:1.55;opacity:.88}
+.live-try{border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:16px;background:rgba(255,255,255,.08)}
+@media(prefers-color-scheme:dark){.live-try{border-color:rgba(0,0,0,.18);background:rgba(0,0,0,.05)}}
+.live-try strong{font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.live-try ul{margin:8px 0 0 18px;padding:0;font-size:14px;line-height:1.6}
+.live-try a{color:inherit;text-decoration:underline}
+/* Print: one page per slide */
+@media print{
+  body{overflow:visible}
+  .deck{height:auto;overflow:visible;scroll-snap-type:none}
+  .slide{height:auto;min-height:0;overflow:visible;page-break-after:always;padding:20px}
+  .topbar{position:static}
+  .dots,.slide-nav,.counter,elevenlabs-convai{display:none}
+}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-in"><strong>Sales Objection Coach</strong><span>ElevenLabs Voice Agent • Demo Kit</span></div></header>
+<div class="counter" id="slideCounter" aria-live="polite">01 / 05</div>
+<nav class="dots" id="slideDots" aria-label="Slide navigation"></nav>
+<div class="slide-nav">
+  <button class="nav-btn" id="prevSlideBtn" aria-label="Previous slide">↑</button>
+  <button class="nav-btn" id="nextSlideBtn" aria-label="Next slide">↓</button>
+</div>
+
+<main class="deck" id="deck">
+
+<!-- SLIDE 1 · HERO -->
+<section class="slide" data-slide="1" aria-label="Slide 1: Overview">
+  <div class="slide-inner">
+    <div class="ticker" aria-hidden="true"><div class="ticker-track"><span>“Too expensive in SGD”</span><i>✦</i><span>“Show me payback in 30 days”</span><i>✦</i><span>“Budgets are locked”</span><i>✦</i><span>“TikTok is cheaper”</span><i>✦</i><span>“I need to socialise this internally”</span><i>✦</i><span>Say “pause” for a live tip</span><i>✦</i><span>“Too expensive in SGD”</span><i>✦</i><span>“Show me payback in 30 days”</span><i>✦</i><span>“Budgets are locked”</span><i>✦</i><span>“TikTok is cheaper”</span><i>✦</i><span>“I need to socialise this internally”</span><i>✦</i><span>Say “pause” for a live tip</span><i>✦</i></div></div>
+    <span class="slide-num">01 · Overview</span>
+    <div class="hero">
+      <div>
+        <span class="pill">● Start with the $102.8bn market on slide 2, then hear it in action. No code, just voice.</span>
+        <h1 class="serif">Practice the hard <em>no</em>,<br>before the real call.</h1>
+        <p class="lead">A voice roleplay coach for Singapore and Southeast Asia that plays the tough buyer — Singapore CFO, regional CMO, procurement, agency lead — pushes back on price in SGD, ROI and timing, then scores how you handled it. Not sure where to start? Ask the live voice guide on slide 4.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+          <button class="btn btn-primary" onclick="goToSlide(1)">See the market + TAM ↓</button>
+          <button class="btn btn-secondary" onclick="startLiveCoach()">Talk to the coach live</button>
+          <button class="btn btn-secondary" onclick="goToSlide(3)">Start a drill ↓</button>
+        </div>
+        <div class="quick-picks">
+          <span>Pick your buyer — jumps to the practice slide</span>
+          <button class="chip" onclick="selectPersona('cfo');goToSlide(2)">Singapore CFO</button>
+          <button class="chip" onclick="selectPersona('cmo');goToSlide(2)">CMO, Indonesia</button>
+          <button class="chip" onclick="selectPersona('procurement');goToSlide(2)">Procurement Lead</button>
+          <button class="chip" onclick="selectPersona('agency');goToSlide(2)">Agency Buyer</button>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-top:14px">Works for Meta Ads, SaaS, or any high-ticket pitch. Swap the knowledge base and it becomes your product. Swipe, scroll, or use ↑ ↓ to move between slides.</p>
+      </div>
+      <aside class="hero-card">
+        <h3>How a live demo flows</h3>
+        <p><strong>1.</strong> You pick a persona &nbsp;→&nbsp; <strong>2.</strong> Agent opens with an objection in voice &nbsp;→&nbsp; <strong>3.</strong> You respond out loud &nbsp;→&nbsp; <strong>4.</strong> It escalates once, then scores you.</p>
+        <div class="stats">
+          <div class="stat"><b>4</b><span>Buyer personas</span></div>
+          <div class="stat"><b>12</b><span>Objections</span></div>
+          <div class="stat"><b>5 min</b><span>Per drill</span></div>
+        </div>
+        <div class="allowance-note">
+          <div class="allow-head"><span>Coaching time on your current tier</span><b>Creator · tonight</b></div>
+          <p style="font-size:22px;line-height:1.15;margin-top:8px"><strong>4 hrs 35 mins</strong> <span style="font-size:13.5px;opacity:.85">of live voice coaching</span></p>
+          <div class="meter" role="img" aria-label="Creator tier: 275 agent minutes per month"><i></i></div>
+          <p>275 agent minutes a month on Creator. That is about <strong>55 five-minute drills</strong>, or <strong>18 full sessions</strong> of 3 rounds each. <a href="#" onclick="goToSlide(3);return false" style="color:inherit;text-decoration:underline">See what every tier gets ↓</a></p>
+        </div>
+        <div style="margin-top:12px;background:rgba(255,255,255,.14);border-radius:12px;padding:12px">
+          <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;opacity:.8">Why ElevenLabs here</div>
+          <p style="font-size:13.5px;margin-top:4px">Emotion tags like [sigh] and [pause] + a stern or warm cloned voice make the pushback feel human. Text chat never lands the same.</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="live-band" id="live-coach">
+      <div>
+        <span class="live-dot" style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase"><i aria-hidden="true" style="width:9px;height:9px;border-radius:50%;background:#34d399;display:inline-block"></i> Live · Embedded on this page</span>
+        <h3 class="serif">The coach is live right here. No new tab, no install.</h3>
+        <p>The ElevenLabs voice agent is embedded into this page. Tap the <strong>call button at the bottom-left</strong> of your screen (or the button below), allow the microphone, and you are straight into a roleplay with the buyer. It runs on the same Creator pool: 275 agent minutes a month, about 55 five-minute drills.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+          <button class="btn btn-primary" onclick="startLiveCoach()">Start a live voice drill</button>
+          <button class="btn" style="background:transparent;color:inherit;border:1px solid currentColor" onclick="goToSlide(3)">Open the companion dashboard</button>
+        </div>
+      </div>
+      <div class="live-try">
+        <strong>Say one of these to open</strong>
+        <ul>
+          <li>“Run the Singapore CFO on price, in SGD.”</li>
+          <li>“Give me the CMO in Indonesia, on local creative.”</li>
+          <li>“Pause” at any point for a coach tip, “Score me” to get marked.</li>
+        </ul>
+        <p style="margin:10px 0 0;font-size:13px;opacity:.85">Call button not appearing? <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_6901m72efzwhff4s8tsx9c9rcna7" target="_blank" rel="noopener">Open the coach on ElevenLabs instead</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2 · MARKET + TAM -->
+<section class="slide" data-slide="2" aria-label="Slide 2: The market and TAM">
+  <div class="slide-inner" id="market">
+    <span class="slide-num">02 · The market</span>
+    <span class="fun-kicker">Start here · The arena, the prize, the gap</span>
+    <h2 class="serif slide-title">First, the market: $102.8bn is already being spent</h2>
+    <p class="slide-sub">Companies already pour serious money into training, coaching measurably moves quota, and sellers still get almost no live practice. That gap is the whole reason this coach exists. Every figure is dated and sourced, with the caveats the sources carry.</p>
+
+    <div class="block">
+      <div class="tam-wrap" aria-label="Total addressable market">
+        <div class="tam-head"><strong>The TAM, in three fun-sized bites</strong><span>No new budget to invent. This coach competes for money teams already spend.</span></div>
+        <div class="tam-funnel">
+          <div class="tam-level tam-l1"><span class="tam-label">TAM · The whole arena</span><div class="tam-num">$102.8bn <small>a year</small></div><p>Total US training spend in 2025, across organisations with 100+ staff. Training is not a nice-to-have line item, it is a hundred-billion-dollar habit.</p><span class="src">Source: <a href="https://trainingmag.com/2025-training-industry-report/" target="_blank" rel="noopener">Training magazine, 2025 Training Industry Report</a></span></div>
+          <div class="tam-level tam-l2"><span class="tam-label">The sales slice</span><div class="tam-num">$15bn <small>a year</small></div><p>What US firms spend training salespeople alone. Older figure (2017, via HBR), so treat it as directional, but the order of magnitude is the point: sales training is its own big market inside the arena.</p><span class="src">Source: HBR (2017), via <a href="https://solofire.com/research/sales-training-coaching-statistics/" target="_blank" rel="noopener">Solofire's source-checked statistics</a></span></div>
+          <div class="tam-level tam-l3"><span class="tam-label">The wallet per rep · Your beachhead</span><div class="tam-num">$2,000–2,998 <small>per rep / year</small></div><p>The median $1,000–$1,499 per salesperson for sales training, plus another $1,000–$1,499 for the sales kickoff. Win a slice of that existing wallet and you never have to argue for new money.</p><span class="src">Source: <a href="https://www.prweb.com/releases/atd-research-more-than-half-of-organizations-invest-in-sales-enablement-840651626.html" target="_blank" rel="noopener">ATD, 2023 State of Sales Training</a> (2022 data)</span></div>
+        </div>
+        <div class="tam-calc">
+          <div class="tam-calc-left">
+            <label for="tamReps">Play with it: how big is your sales team?</label>
+            <div class="tam-slider-row"><input type="range" id="tamReps" min="10" max="1000" step="10" value="100"><output id="tamRepsOut" for="tamReps">100 reps</output></div>
+            <p class="tam-level-name" id="tamLevelName">Level: Platoon. Big enough that one bad quarter pays for a lot of practice.</p>
+          </div>
+          <div class="tam-calc-right" aria-live="polite">
+            <span>That team's existing training + kickoff wallet</span>
+            <strong id="tamWallet">$200,000 – $299,800 <small>/ year</small></strong>
+            <p id="tamNote">Already budgeted, using the ATD median range above. A voice coach only needs a thin slice of it to earn its keep, and in Singapore up to 90% of course fees can be subsidised (see below), so the buyer's out-of-pocket slice is smaller still.</p>
+          </div>
+        </div>
+        <p class="tam-honest">Honest bit: there is no published Singapore per-employee training spend to build a local TAM from, so this funnel is US-anchored and labelled as such. Singapore's angle is different: participation is falling (40.7% trained in 2024) while the state funds up to 90% of fees. The demand gap plus the subsidy is the Singapore story.</p>
+      </div>
+    </div>
+
+    <h3 class="market-sub">Round 1 · What companies already spend <span class="fun-sub">Spoiler: a lot, and mostly on content, not practice</span></h3>
+    <div class="metric-grid">
+      <article class="metric-card">
+        <div class="num" data-count="102.8" data-decimals="1" data-prefix="$" data-suffix="bn">$102.8<small>bn</small></div>
+        <h3>Total US training spend, 2025</h3>
+        <p>Across US organisations with 100+ employees: <strong>$874 per learner</strong> and <strong>40 hours of training per employee per year</strong> (down from 47 hours in 2024).</p>
+        <span class="src">Source: <a href="https://trainingmag.com/2025-training-industry-report/" target="_blank" rel="noopener">Training magazine, 2025 Training Industry Report</a></span>
+      </article>
+      <article class="metric-card">
+        <div class="num" data-count="846" data-prefix="$">$846</div>
+        <h3>ATD direct spend per employee</h3>
+        <p>ATD's 2026 report (2025 data, 340 organisations) counts <strong>direct expenditure only</strong> and <strong>16.7 formal learning hours</strong> per employee. The two benchmarks measure different things: ATD counts formal learning, Training magazine counts all training spend including payroll, so they are two measures, not a contradiction.</p>
+        <span class="src">Source: <a href="https://www.td.org/content/atd-blog/highlights-from-atd-s-2026-state-of-the-industry-report" target="_blank" rel="noopener">ATD, 2026 State of the Industry</a></span>
+      </article>
+      <article class="metric-card">
+        <div class="num">$1,000–1,499</div>
+        <h3>Per salesperson, per year, on sales training</h3>
+        <p>The median organisation spent this on sales training per salesperson (2022 data), with sales kickoff meetings costing <strong>another $1,000–$1,499 per salesperson</strong> on top.</p>
+        <span class="src">Source: <a href="https://www.prweb.com/releases/atd-research-more-than-half-of-organizations-invest-in-sales-enablement-840651626.html" target="_blank" rel="noopener">ATD, 2023 State of Sales Training</a></span>
+      </article>
+      <article class="metric-card">
+        <div class="num" data-count="40.7" data-decimals="1" data-suffix="%">40.7<small>%</small></div>
+        <h3>Singapore: share of workers trained, 2024</h3>
+        <p>The share of the resident labour force who did job-related structured training in the year to June 2024, the lowest since 2015. Employers providing structured training fell from <strong>79.6% (2023) to 66.4% (2024)</strong>. Singapore publishes participation, not spend: <strong>no per-employee training spend or hours benchmark exists</strong> to quote.</p>
+        <span class="src">Sources: MOM, Labour Force in Singapore 2024; <a href="https://www.iac.gov.sg/-/media/mom/documents/press-releases/2025/nwc-guidelines-11nov25.pdf" target="_blank" rel="noopener">National Wages Council Guidelines 2025/2026</a> (MOM Employer Supported Training Survey)</span>
+      </article>
+      <article class="metric-card">
+        <div class="num">Up to 90<small>%</small></div>
+        <h3>Singapore: the state pays much of the bill</h3>
+        <p>Course-fee funding runs up to <strong>70% baseline</strong>, and up to <strong>90%</strong> for citizens aged 40+ and SME-sponsored staff. Individuals get a <strong>$500 SkillsFuture Credit</strong> at 25 plus a <strong>$4,000 mid-career top-up</strong> at 40+, and each eligible firm gets a one-off <strong>$10,000 SkillsFuture Enterprise Credit</strong>.</p>
+        <span class="src">Source: <a href="http://www.moe.gov.sg/news/speeches/20250306-moe-fy2025-committee-of-supply-debate-response-by-minister-of-state-for-education-gan-siow-huang" target="_blank" rel="noopener">MOE, Committee of Supply debate response, 6 Mar 2025</a></span>
+      </article>
+      <article class="metric-card">
+        <div class="num" data-count="89" data-suffix="%">89<small>%</small></div>
+        <h3>How the training is delivered</h3>
+        <p>89% of organisations use an LMS, 34% of training hours are online or computer-based, 28% are still instructor-led classroom, and 61% do at least some sales training online. Delivery is mostly content, which is the gap the next two blocks quantify.</p>
+        <span class="src">Source: <a href="https://trainingmag.com/2025-training-industry-report/" target="_blank" rel="noopener">Training magazine, 2025 Training Industry Report</a></span>
+      </article>
+    </div>
+
+    <h3 class="market-sub">Round 2 · What coaching actually returns <span class="fun-sub">The scoreboard, with the famous fake number called out</span></h3>
+    <div class="roi-strip">
+      <article class="metric-card">
+        <div class="num">+32<small>% win rates</small></div>
+        <h3>Consistent coaching pays</h3>
+        <p>Organisations with consistent sales coaching and impact measurement report <strong>32% higher win rates</strong> and <strong>28% higher quota attainment</strong> than those without. A survey comparison, not a controlled trial.</p>
+        <span class="src">Source: <a href="http://www.kornferry.com/insights/featured-topics/sales-transformation/building-the-business-case-for-sales-coaching" target="_blank" rel="noopener">Korn Ferry, 5th Annual Sales Enablement Study (2023)</a></span>
+      </article>
+      <article class="metric-card">
+        <div class="num">91.2<small>% vs 84.7%</small></div>
+        <h3>Formal coaching vs leaving it to managers</h3>
+        <p>Overall quota attainment for companies with a formal coaching process versus an informal one, across 1,200 companies. Only 21% of companies had a formal process at all.</p>
+        <span class="src">Source: <a href="https://chiefexecutive.net/10-powerful-ways-to-inject-discipline-into-the-revenue-generation-process/" target="_blank" rel="noopener">CSO Insights, 2014 Sales Management Optimization Study</a></span>
+      </article>
+      <article class="metric-card">
+        <div class="num">+43<small>% → +67%</small></div>
+        <h3>Training alone vs training plus coaching</h3>
+        <p>Revenue performance lift from salesperson training alone, versus training combined with manager coaching, over 18 months. One large US travel-services company, 246 salespeople and managers, so an illustration, not a general rate.</p>
+        <span class="src">Source: <a href="https://www.wilsonlearning.com/wlw/research-paper/s/invest-in-manager-training/en-gb" target="_blank" rel="noopener">Wilson Learning, manager training study</a></span>
+      </article>
+      <article class="metric-card">
+        <div class="num">&gt;80<small>%</small></div>
+        <h3>Forgotten within 90 days</h3>
+        <p>Participants in traditional curriculum-based training forget more than 80% of what they were taught within 90 days, per Harvard Business Review's summary of the field. The peer-reviewed root of this, Ebbinghaus (1885, replicated 2015), measured “savings” on relearning rather than recall: about 12.5% of the savings remained after 31 days.</p>
+        <span class="src">Sources: HBR, “Your Sales Training Is Probably Lackluster” (Cespedes); Ebbinghaus via <a href="https://solofire.com/research/sales-training-coaching-statistics/" target="_blank" rel="noopener">Solofire's source-checked statistics</a></span>
+      </article>
+    </div>
+    <div class="honest-note">
+      <strong>About the famous “353% ROI” figure</strong>
+      There is no verified study that gives a clean dollar return per dollar spent on sales training. The widely quoted 353% ROI ($4.53 back per $1) comes from Accenture's own company-wide learning programme, published in a 2006 book, and is routinely misattributed to sales training. It is not used on this page as a sales figure; the coaching and quota evidence above is what holds up.
+    </div>
+
+    <h3 class="market-sub">Round 3 · What sellers had before this <span class="fun-sub">Five worthy opponents, one shared weakness: no live reps</span></h3>
+    <div style="border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface)">
+      <table class="table before-table">
+        <thead><tr><th style="width:26%">Method</th><th>What it cost, and where it fell short</th></tr></thead>
+        <tbody>
+          <tr><td><b>Classroom workshops &amp; sales kickoffs</b></td><td>Kickoffs alone ran $1,000–$1,499 per salesperson, on top of the $1,000–$1,499 training spend (ATD, 2023). The format is the problem: intense, infrequent bursts with no practice in between, so the forgetting curve above takes most of it.</td></tr>
+          <tr><td><b>Manager ride-alongs &amp; 1:1 coaching</b></td><td>The highest-leverage method in the research, and the scarcest. Managers spend on average <strong>9% of their time</strong> developing direct reports (Gartner, 2019), <strong>76% of firms</strong> say their managers provide too little coaching, and 70.8% of sales leaders coach each rep 60 minutes a week or less (Sales Management Association, 2018; CSO Insights, 2014).</td></tr>
+          <tr><td><b>Peer roleplay</b></td><td>The closest pre-AI analogue, limited by scheduling and who is free to play the buyer. <strong>47% of Gen Z reps</strong> say they do not get enough role-play opportunities before customer calls, and <strong>46% rarely get feedback</strong> on their sales conversations (Salesforce, State of Sales, 2026).</td></tr>
+          <tr><td><b>Call-recording review (Gong, Chorus)</b></td><td>Neither vendor publishes pricing; third-party buyer-reported estimates put Gong at roughly <strong>$1,300–$1,920 per user per year</strong> plus a mandatory platform fee of <strong>$5,000–$50,000 a year</strong>, and Chorus at about $1,200 per user per year. Its limit is structural: it reviews calls that already happened. There is no practice mode and no live feedback, so a rep can watch a call go wrong but cannot rehearse the next one.</td></tr>
+          <tr><td><b>LMS &amp; e-learning courses</b></td><td>Cheap per learner at scale ($468 per learner at large companies versus $1,091 at small ones, Training magazine 2025), and used by 89% of organisations. But it delivers content and quizzes: no spoken objection handling, no rehearsal, no individual feedback.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13.5px;color:var(--muted);margin:12px 0 0">The cost of that rationed practice shows up in ramp time: the average SaaS account executive took <strong>6.2 months to ramp in 2026</strong>, the highest on record, up from 4.3 months in 2020 (Bridge Group, via <a href="https://solofire.com/research/sales-training-coaching-statistics/" target="_blank" rel="noopener">Solofire</a>). Gong and Chorus pricing: <a href="https://www.raftlabs.com/blog/gong-pricing" target="_blank" rel="noopener">RaftLabs pricing breakdown</a>. Manager coaching and roleplay figures: Gartner, Sales Management Association and Salesforce via Solofire's source-checked compendium, linked above. Researched 10 Nov 2026.</p>
+  </div>
+</section>
+
+<!-- SLIDE 3 · PRACTICE -->
+<section class="slide" data-slide="3" id="personas" aria-label="Slide 3: Practice — buyers, objections and voices">
+  <div class="slide-inner">
+    <span class="slide-num">03 · Practice</span>
+    <h2 class="serif slide-title">Choose your buyer, pick your fight</h2>
+    <p class="slide-sub">Four buyers, twelve objections, four distinct voices. Everything on this slide is wired together: pick a persona and the library, drill and voice all follow.</p>
+
+    <div class="block">
+      <div class="block-head"><div><h3 class="serif">Choose your buyer</h3><p>Each persona has a different pressure point and a different ElevenLabs voice. Click one — the library and drill update.</p></div><span class="tag" id="activePersonaLabel">Active: Singapore CFO</span></div>
+      <div class="personas" id="personaGrid"></div>
+    </div>
+
+    <div class="block" id="library">
+      <div class="block-head"><div><h3 class="serif">Objection library</h3><p>Tap any objection for what they really mean, the framework to use, and a word-for-word reply you can steal. The list scrolls — all 12 are in there.</p></div></div>
+      <div class="filters" id="filters"></div>
+      <div class="library">
+        <div class="obj-list" id="objList"></div>
+        <article class="detail" id="detailPanel"></article>
+      </div>
+    </div>
+
+    <div class="block" id="voice-config">
+      <div class="block-head"><div><h3 class="serif">Voice configurator — who you are actually talking to</h3><p>One agent, four very different voices. Pick a buyer and you see the person behind the voice: age, gender, where they sit, how their English sounds, and the exact ElevenLabs settings to recreate it. No two profiles share the same combination.</p></div><span class="tag" id="voiceActiveLabel">Now configuring: Singapore CFO</span></div>
+      <div class="voice-grid" id="voiceGrid" role="list" aria-label="Voice profiles"></div>
+      <div class="voice-panel">
+        <div class="voice-profile">
+          <div style="display:flex;gap:14px;align-items:center">
+            <div class="voice-avatar-lg" id="vcAvatar" style="background:#0f766e">CF</div>
+            <div>
+              <span class="tag" id="vcRoleTag">CFO · Singapore</span>
+              <h3 style="margin:6px 0 2px;font-size:22px;line-height:1.15" id="vcName">Daniel — Singapore CFO</h3>
+              <p style="margin:0;font-size:13.5px;color:var(--muted)" id="vcDemo">Male · 52 · Middle-aged</p>
+            </div>
+          </div>
+          <div class="wave" id="vcWave" aria-hidden="true"></div>
+          <p style="margin:12px 0 0;font-size:14.5px;line-height:1.55" id="vcDesc"></p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+            <div style="border:1px solid var(--line);border-radius:12px;padding:11px;background:var(--surface)"><span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;color:var(--muted)">Accent</span><p style="margin:4px 0 0;font-size:13.5px;line-height:1.45" id="vcAccent"></p></div>
+            <div style="border:1px solid var(--line);border-radius:12px;padding:11px;background:var(--surface)"><span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;color:var(--muted)">Sounds like</span><p style="margin:4px 0 0;font-size:13.5px;line-height:1.45" id="vcSound"></p></div>
+            <div style="border:1px solid var(--line);border-radius:12px;padding:11px;background:var(--surface)"><span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;color:var(--muted)">Local flavour</span><p style="margin:4px 0 0;font-size:13.5px;line-height:1.45" id="vcLocal"></p></div>
+            <div style="border:1px solid var(--line);border-radius:12px;padding:11px;background:var(--surface)"><span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;color:var(--muted)">Find this voice</span><p style="margin:4px 0 0;font-size:13.5px;line-height:1.45" id="vcSearch"></p></div>
+          </div>
+          <div class="voice-sample"><span>Sample line — in this voice</span><span id="vcSample" style="display:inline;font-size:15px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--ink)"></span></div>
+          <div style="margin-top:16px">
+            <strong style="font-size:13px;letter-spacing:.04em;text-transform:uppercase">Voice DNA</strong>
+            <div id="vcDna"></div>
+          </div>
+        </div>
+        <div class="voice-controls">
+          <h3>Configure it in ElevenLabs</h3>
+          <p style="margin:4px 0 0;font-size:13.5px;color:var(--muted);line-height:1.5">Drag the sliders and the settings sheet below updates live. Copy it straight into the agent's Voice Settings. Switching buyer above loads that buyer's defaults, so you can feel how far apart they are.</p>
+          <div class="slider-row">
+            <div class="slider-row-head"><label for="vcStability">Stability</label><output id="vcStabilityVal">38</output></div>
+            <p>Lower = more expressive and variable. Higher = steadier, more formal, less likely to drift.</p>
+            <input type="range" id="vcStability" min="0" max="100" step="1" value="38">
+          </div>
+          <div class="slider-row">
+            <div class="slider-row-head"><label for="vcSimilarity">Similarity boost</label><output id="vcSimilarityVal">75</output></div>
+            <p>How tightly the output sticks to the source voice's timbre and accent.</p>
+            <input type="range" id="vcSimilarity" min="0" max="100" step="1" value="75">
+          </div>
+          <div class="slider-row">
+            <div class="slider-row-head"><label for="vcStyle">Style exaggeration</label><output id="vcStyleVal">30</output></div>
+            <p>Higher = more character, pace swings and attitude. Keep it low for procurement and finance formality.</p>
+            <input type="range" id="vcStyle" min="0" max="100" step="1" value="30">
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;align-items:center">
+            <button class="btn btn-secondary toggle-btn" id="vcBoost" aria-pressed="true"><span class="dot" aria-hidden="true"></span><span>Speaker boost: On</span></button>
+            <button class="btn btn-ghost" id="vcReset">Reset to buyer defaults</button>
+          </div>
+          <div class="voice-output">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px"><span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:#94a3b8">ElevenLabs settings sheet</span><button class="btn" style="background:#fff;color:#111;padding:7px 12px;font-size:12px" id="vcCopyBtn">Copy settings</button></div>
+            <pre id="vcOutput"></pre>
+          </div>
+          <p style="font-size:12.5px;color:var(--muted);margin:12px 0 0;line-height:1.5">Reality check: one ElevenLabs agent has one voice, so these are four presets to choose between, or four agents if you want each buyer to keep their own voice in the same drill. The accent itself comes from the voice you pick in the Voice Library, the prompt shapes the words and Singlish / Bahasa level.</p>
+        </div>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:6px 6px 2px;overflow:hidden;margin-top:14px">
+        <table class="voice-compare" aria-label="Voice profiles at a glance">
+          <thead><tr><th>Buyer</th><th>Who</th><th>Accent &amp; language</th><th>Delivery</th><th>Defaults</th></tr></thead>
+          <tbody id="vcCompareBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4 · LIVE COACHING -->
+<section class="slide" data-slide="4" aria-label="Slide 4: Live coaching — guide, allowance, companion, drill and progress">
+  <div class="slide-inner">
+    <span class="slide-num">04 · Live coaching</span>
+    <h2 class="serif slide-title">Talk to it, drill with it, track it</h2>
+    <p class="slide-sub">The live voice guide, the coaching time your tier buys, the companion dashboard for your call, the text drill, and your progress: the full session, on one slide.</p>
+
+    <div class="block" id="guide">
+      <div class="block-head"><div><h3 class="serif">Meet your voice guide</h3><p>The fastest way to understand this page: talk to it. The guide is a live ElevenLabs agent. It gives you a 60-second tour, lets you try one objection, and asks what was unclear, so the page keeps getting better.</p></div><span class="tag">Live agent • No install</span></div>
+      <div class="guide-panel">
+        <div class="guide-live">
+          <span class="live-dot"><i aria-hidden="true"></i> Live on ElevenLabs</span>
+          <div class="orb-wrap"><div class="orb" role="img" aria-label="Voice guide orb"></div></div>
+          <h3 style="margin:4px 0 2px;text-align:center;font-size:18px">Landing Page Guide</h3>
+          <p style="margin:0;text-align:center;font-size:13.5px;opacity:.85">Sales Objection Coach • ElevenAgents<br>Call it, or switch to Chat on the ElevenLabs page.</p>
+          <div class="guide-quote"><span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;opacity:.75">It opens with</span><br>“Hi, I am the guide for the Sales Objection Coach. Want a 60 second tour, or do you want to try one objection with the Singapore CFO right now?”</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+            <button class="btn" style="background:var(--accent);color:#fff" onclick="startLiveCoach()">Call AI agent — live on this page</button>
+            <button class="btn" style="background:transparent;color:inherit;border:1px solid currentColor" id="copyGuideLinkBtn">Copy guide link</button>
+          </div>
+          <p style="font-size:12.5px;opacity:.75;margin:12px 0 0">The agent is embedded on this page: the call opens in the widget at the bottom-left, so allow the microphone here when asked. Prefer typing? Open the widget and use its chat, or run the text tour on the right.</p>
+          <p class="guide-allow"><b>On Creator tonight: 4 hrs 35 mins of coaching.</b><br>275 agent minutes this month. Every live call, tour and try-out with this guide draws from that same pool, so a 1-minute tour costs a minute and a 5-minute drill costs five.</p>
+        </div>
+        <div class="guide-main">
+          <h3 style="margin:0;font-size:16px">The visual tour, in 3 steps</h3>
+          <div class="tour-steps">
+            <div class="tour-step"><b>1</b><strong>Take the tour</strong><p>Pick a buyer, pick an objection, get scored. That is the whole coach in one line.</p></div>
+            <div class="tour-step"><b>2</b><strong>Try one objection</strong><p>The guide plays the Singapore CFO on price in SGD for one exchange, then debriefs you in 20 seconds.</p></div>
+            <div class="tour-step"><b>3</b><strong>Say what was unclear</strong><p>Two questions only: what was unclear, and what would make you try the drill? That feedback improves this page.</p></div>
+          </div>
+          <p style="font-size:13px;font-weight:700;margin:16px 0 0">Try the tour here first, no microphone needed:</p>
+          <div class="say-chips">
+            <button class="chip" data-guide-action="tour">“Give me the 60-second tour”</button>
+            <button class="chip" data-guide-action="try">“Let me try the CFO”</button>
+            <button class="chip" data-guide-action="feedback">“I want to give feedback”</button>
+          </div>
+          <div class="guide-chat" id="guideChat" aria-live="polite">
+            <div class="bubble buyer"><strong>Guide:</strong> Hi, I am the guide for the Sales Objection Coach. Want a 60 second tour, or do you want to try one objection right now?</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+            <button class="btn btn-primary" data-guide-action="try" style="padding:9px 14px;font-size:13px">Start the CFO try-out ↓</button>
+            <button class="btn btn-secondary" onclick="goToSlide(2)" style="padding:9px 14px;font-size:13px">Browse the buyers instead</button>
+          </div>
+        </div>
+      </div>
+      <details class="guide-prompt">
+        <summary>Rebuild this guide in ElevenLabs — copy-paste prompt <span>Use this if you want your own copy of the guide, or to update the live agent so it stays in sync with this page. Voice: warm and clear, Stability 40, Style 40 to start.</span></summary>
+        <div style="padding:0 18px 18px">
+          <div class="prompt-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:#94a3b8">Guide system prompt — paste into ElevenLabs Agent → Prompt</span><button class="btn" style="background:white;color:#111;padding:7px 12px;font-size:12px" id="copyGuidePromptBtn">Copy guide prompt</button></div>
+            <pre id="guidePrompt"># ROLE
+You are the Landing Page Guide for the Sales Objection Coach, a voice agent built with ElevenLabs. Your job is to help a visitor understand the coach in under 60 seconds, let them try one objection, and learn what is unclear on the page. You are friendly, direct, and concise. You never hard sell.
+
+# WHAT THE PAGE IS ABOUT
+The Sales Objection Coach helps sales and GTM people in Singapore and Southeast Asia practice tough buyer objections before a real call.
+It has 4 buyers: Singapore CFO, Regional CMO for SEA, Singapore Procurement Lead, and Agency Buyer.
+It has a library of 12 objections with the hidden meaning, a probe question, and a reply you can steal.
+It has a live text drill that scores a reply on empathy, curiosity, proof, and next step, out of 100.
+It has 3 handling frameworks, and a copy-paste ElevenLabs build kit with the full system prompt, 5 setup steps, and a voice cheat sheet.
+Coaching time: the current tier is Creator, tonight only. Creator includes 275 agent minutes a month, which is 4 hours 35 minutes of live voice coaching: about 55 five-minute drills or 18 full 3-round sessions. Free is 15 minutes, Starter is 75 minutes (1 hour 15), and Pro is 1,238 minutes (20 hours 38). All live calls draw from the same monthly minute pool.
+Context: Built for Meta ads pitches across SEA, Japan, and ANZ. Money is in SGD. Objections cover price, ROI, timing, TikTok and Shopee and Lazada pressure, multi-market creative in Bahasa, Thai, and Vietnamese, PDPA, and HQ approval.
+
+# YOUR JOB IN ORDER
+1. Greet and ask one question: "Want a 60 second tour, or do you want to try one objection right now?"
+2. If they pick tour, give it in 3 short points: pick a buyer, pick an objection, get scored. Each point is one sentence. Then ask: "Want to try the CFO on price?"
+3. If they pick try it, play the Singapore CFO for one exchange only. Say: "Your Meta ads are too expensive in SGD. My HQ will not approve this. Convince me in two sentences." Listen, then give a 20 second debrief: one thing that worked, one fix, and a stronger reply in two sentences max.
+4. If they ask a question about the page, answer from the knowledge base only. If you do not know, say: "That is not on this page yet, I will note it as feedback."
+5. At the end, ask two feedback questions, one at a time: "What was unclear on this page?" and "What would make you try the drill?" Thank them and stop.
+
+# HOW YOU TALK
+Keep replies short: 1 to 2 sentences at a time. Ask one question at a time. Use plain Singapore English. Do not use jargon like RevOps or GTM unless the visitor uses it first. Do not invent prices, features, or testimonials. Do not claim the coach integrates with Gong, Salesforce, or a CRM. It does not. It is a practice tool, not a call recorder.
+
+# FIRST MESSAGE (set this separately in ElevenLabs)
+Hi, I am the guide for the Sales Objection Coach. Want a 60 second tour, or do you want to try one objection with the Singapore CFO right now?
+
+# GUARDRAILS
+Do not collect email, phone, or personal data unless the visitor offers it.
+Do not give legal, pricing, or Meta confidential advice.
+If the visitor wants the full coach system prompt, tell them it is in the Build Kit section on the page.
+End every conversation after the feedback questions, unless they ask to try another objection.</pre>
+          </div>
+          <ol style="font-size:14px;color:var(--muted);margin:12px 0 0 18px;padding:0">
+            <li>Create a new agent in ElevenLabs Conversational AI and paste the prompt above.</li>
+            <li>Set the first message above, and upload a 1-page knowledge base: the 4 buyers, the 12 objections, and the scoring rubric (empathy 25, curiosity 25, proof 25, next step 25).</li>
+            <li>Pick a warm, clear voice (Stability 40, Style 40), test it, then share the agent link from this page.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+    <div class="block" id="allowance">
+      <div class="block-head"><div><h3 class="serif">How much coaching your tier buys</h3><p>ElevenLabs gives each plan a monthly pool of agent minutes. Those minutes are the coaching time: the live guide, the CFO try-out, and every voice drill all draw from the same pool. Hours below are that pool, converted.</p></div><span class="tag">Current tier: Creator · tonight only</span></div>
+      <div class="tier-grid">
+        <article class="tier-card">
+          <div class="tier-top"><span class="tag">Free</span><span class="mins">$0 / month</span></div>
+          <div class="hours">0 hrs 15 <small>mins</small></div>
+          <p><span class="mins">15 agent minutes</span><br>About 3 five-minute drills. Enough to build and test the agent tonight, not to practise weekly.</p>
+        </article>
+        <article class="tier-card">
+          <div class="tier-top"><span class="tag">Starter</span><span class="mins">$6 / month</span></div>
+          <div class="hours">1 hr 15 <small>mins</small></div>
+          <p><span class="mins">75 agent minutes</span><br>About 15 five-minute drills, or 5 full 3-round sessions a month.</p>
+        </article>
+        <article class="tier-card current">
+          <div class="tier-top"><span class="tag" style="background:var(--accent);color:#fff;border-color:var(--accent)">Creator · current</span><span class="mins">$22 / month</span></div>
+          <div class="hours">4 hrs 35 <small>mins</small></div>
+          <p><span class="mins">275 agent minutes</span><br>About 55 five-minute drills, or 18 full 3-round sessions a month. The tier you have tonight, so the guide and drills on this page run on this pool.</p>
+        </article>
+        <article class="tier-card">
+          <div class="tier-top"><span class="tag">Pro</span><span class="mins">$99 / month</span></div>
+          <div class="hours">20 hrs 38 <small>mins</small></div>
+          <p><span class="mins">1,238 agent minutes</span><br>About 247 five-minute drills. Team-level practise, or sharing the coach beyond one person.</p>
+        </article>
+      </div>
+      <div class="calc-bar">
+        <div>
+          <label for="sessionLength">On Creator, if one session runs</label><br>
+          <select id="sessionLength" style="margin-top:6px">
+            <option value="1">1 min · guide tour</option>
+            <option value="5" selected>5 mins · one drill</option>
+            <option value="10">10 mins · drill + pause-and-coach tips</option>
+            <option value="15">15 mins · full session, 3 rounds</option>
+          </select>
+        </div>
+        <p class="calc-result" id="calcResult" aria-live="polite">You get about <b>55 sessions</b> from 275 minutes, with <b>0 minutes</b> left over.</p>
+        <p style="flex-basis:100%">Minutes past the monthly pool are billed per minute (about $0.08 per agent minute, plus the language model). Paid-plan minutes roll over for up to two months, capped at three times the monthly quota. Prices in USD, excluding taxes, as listed in early November 2026.</p>
+      </div>
+    </div>
+
+    <div class="block" id="companion">
+      <div class="block-head"><div><h3 class="serif">Live companion dashboard</h3><p>Keep this open beside the voice call. The voice agent can't push state to this page, so you tap to update it as you go: buyer, objection, exchange and scores stay in sync with what you hear. Tap Pause when you say “pause” on the call and the tip card appears here, not just in voice.</p></div><span class="tag">Manual companion • Tap to update</span></div>
+      <div class="companion">
+        <div class="comp-live">
+          <div class="comp-live-top"><span class="live-badge"><i></i> Live • Beside your call</span><span class="tag" style="background:rgba(255,255,255,.18);color:inherit;border-color:transparent" id="compExchangeLabel">Exchange 1 of 3</span></div>
+          <div class="comp-buyer">
+            <div class="avatar" id="compAvatar" style="background:#0f766e">CF</div>
+            <div><strong id="compBuyerName" style="display:block;font-size:16px;line-height:1.2">Singapore CFO</strong><span id="compBuyerMeta" style="font-size:13px;opacity:.85">Price in SGD • HQ approval</span></div>
+            <span class="tag" style="margin-left:auto;background:#fff;color:#111;border-color:#fff" id="compObjTag">Price</span>
+          </div>
+          <p class="comp-quote" id="compQuote">“Your Meta ads are too expensive in SGD. My HQ will not approve this.”</p>
+          <p style="font-size:13px;opacity:.85;margin:8px 0 0" id="compSub">Objection in play. Answer it, then tap your scores on the right as the coach calls them out.</p>
+          <div class="esc-steps" aria-label="Escalation level">
+            <span class="esc-step on" id="escStep1">1 · Tough</span><span class="esc-step" id="escStep2">2 · Tougher</span><span class="esc-step" id="escStep3">3 · + 2nd person</span>
+          </div>
+          <div class="comp-feed" id="compFeed" aria-live="polite">
+            <div class="bubble buyer"><strong id="compFeedBuyer">Singapore CFO:</strong> <span id="compFeedLine">Show me the SGD payback. Not the global deck, the local number.</span></div>
+          </div>
+          <div class="second-person" id="secondPersonCard" hidden>
+            <strong>Second person joins the call</strong><br><span id="secondPersonText"><strong>Singapore Procurement Lead joins:</strong> “If CFO is asking on price, I need the breakdown, SLA and two references as well. Price alone won't clear my review.”</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+            <button class="btn" style="background:var(--accent);color:#fff" onclick="startLiveCoach()">Open voice call — on this page</button>
+            <button class="btn" style="background:#fff;color:#111" id="nextExchangeBtn">Buyer pushes back → Next exchange</button>
+          </div>
+          <p style="font-size:12.5px;opacity:.75;margin:10px 0 0">In Escalation mode, each Next exchange raises the pressure. At Exchange 3 the buyer brings someone else into the room.</p>
+        </div>
+        <div class="comp-main">
+          <div class="comp-selects">
+            <div><label for="compPersonaSel">Buyer in the room</label><br><select id="compPersonaSel" style="margin-top:6px"></select></div>
+            <div><label for="compObjSel">Objection in play</label><br><select id="compObjSel" style="margin-top:6px"></select></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px">
+            <strong style="font-size:15px">Your scores as you answer</strong>
+            <span style="font-size:13px;color:var(--muted)">Overall <b id="compOverall" style="color:var(--accent);font-size:18px">0</b>/100 • Tap 0–5 per line</span>
+          </div>
+          <div id="compMeters"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;align-items:center">
+            <button class="btn btn-primary" id="pauseBtn">⏸ Pause — show tip card</button>
+            <button class="btn btn-secondary" id="resumeBtn" hidden>▶ Resume roleplay</button>
+            <button class="btn btn-ghost" id="resetCompBtn">Reset dashboard</button>
+          </div>
+          <div class="tip-card" id="tipCard" hidden>
+            <h4>⏸ Paused — coach tip card • Read this, then resume</h4>
+            <ol>
+              <li><strong>What he really means:</strong> <span id="tipMeaning">He is not saying no. He cannot defend this number to HQ without an ROI story in SGD.</span></li>
+              <li><strong>Say this:</strong> <span id="tipSay">“I hear you. Before we talk price, can I show you what the return looks like in SGD for a business your size?”</span></li>
+              <li><strong>Ask this:</strong> <span id="tipAsk">“What return would you need to see to take this to HQ with confidence?”</span></li>
+              <li><strong>Proof to use:</strong> <span id="tipProof">Offer a small pilot with one agreed success metric and a kill-switch, judged on CPA / payback, not CPM.</span></li>
+            </ol>
+            <p style="margin:8px 0 0;font-size:13px">On the call the coach will ask: “Resume, or try the line now?” Try the line once here, tap your scores, then hit Resume.</p>
+          </div>
+          <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+              <div><strong style="font-size:15px">Escalation mode</strong><p style="margin:2px 0 0;font-size:13.5px;color:var(--muted);max-width:420px">Closer to a real meeting. The buyer gets tougher each exchange, then pulls in a second person.</p></div>
+              <button class="btn btn-secondary toggle-btn" id="escToggle" aria-pressed="false"><span class="dot" aria-hidden="true"></span><span id="escToggleLabel">Off — standard buyer</span></button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;font-size:13px">
+              <div style="border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg2)"><b>Exchange 1</b><br><span style="color:var(--muted)">Opening objection, as scripted.</span></div>
+              <div style="border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg2)"><b>Exchange 2</b><br><span style="color:var(--muted)">“That's marketing. Give me a number.” Shorter patience, demands proof.</span></div>
+              <div style="border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg2)"><b>Exchange 3</b><br><span style="color:var(--muted)">Second voice joins and adds a new blocker: process, legal or budget sign-off.</span></div>
+            </div>
+            <p style="font-size:13px;color:var(--muted);margin:10px 0 0" id="escHint">Tip: say it on the call too — “Escalate” or “Bring in procurement” — so the voice buyer matches what you see here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" id="drill">
+      <div class="block-head"><div><h3 class="serif">Live drill — text rehearsal</h3><p>This mirrors the voice flow. In ElevenLabs you would speak this; here you type it so you can practice anywhere. Aim for empathy + a question + proof + a next step.</p></div>
+        <div style="display:flex;gap:8px;align-items:center"><label for="difficulty">Difficulty</label><select id="difficulty"><option value="warm">Warm — gives hints</option><option value="tough" selected>Tough — real buyer</option><option value="hostile">Hostile — CFO on a bad day</option></select></div>
+      </div>
+      <div class="drill">
+        <div class="drill-left">
+          <div style="display:flex;justify-content:space-between;align-items:center"><strong id="drillPersonaName">Singapore CFO</strong><span class="tag" style="background:rgba(255,255,255,.2);color:inherit;border-color:transparent" id="drillTimer">05:00 drill</span></div>
+          <p style="font-size:13.5px;opacity:.85" id="drillPersonaDesc">Cares about payback, cash, and risk. Will ask for numbers twice.</p>
+          <div class="chat" id="chatBox"></div>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+            <button class="btn" style="background:white;color:#111" id="newObjectionBtn">↻ New objection</button>
+            <button class="btn btn-ghost" style="color:inherit;border-color:rgba(255,255,255,.35)" id="hintBtn">Give me a hint</button>
+          </div>
+          <p style="font-size:12.5px;opacity:.75;margin-top:12px">Voice tip: each buyer has different ElevenLabs settings — see the <a href="#" onclick="goToSlide(2);return false" style="color:inherit;text-decoration:underline">voice configurator</a> on slide 3 for this persona's age, accent and slider defaults.</p>
+        </div>
+        <div class="drill-right">
+          <label for="responseInput">Your response — talk like you are on the call</label>
+          <textarea id="responseInput" placeholder="e.g. I hear you on cost — can I ask what you are comparing us against? Last quarter a similar retailer cut wasted spend 22% by... Would a 3-week pilot with a kill-switch help you test it without a full commitment?"></textarea>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="scoreBtn">Score my response</button>
+            <button class="btn btn-secondary" id="exampleBtn">Show a strong example</button>
+            <button class="btn btn-ghost" id="clearBtn">Clear</button>
+          </div>
+          <div id="feedbackArea"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" id="progress">
+      <div class="block-head"><div><h3 class="serif">Progress over time — drill your weakest line</h3><p>After each voice session, log the four scores the coach gave you. They save in this browser, so over a week you can see the pattern, spot the weakest dimension, and run the drill the coach would pick for it.</p></div><span class="tag">Saved in this browser • This device only</span></div>
+      <div class="progress-grid">
+        <div class="log-card">
+          <h3 style="margin:0;font-size:16px">Log a round</h3>
+          <p style="margin:4px 0 0;font-size:13.5px;color:var(--muted)">Use the 1–5 scores from the debrief. Takes 20 seconds.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+            <div><label for="logDate">Date</label><br><input type="date" id="logDate" style="margin-top:6px;width:100%;padding:10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px"></div>
+            <div><label for="logBuyer">Buyer</label><br><select id="logBuyer" style="margin-top:6px;width:100%"></select></div>
+          </div>
+          <div id="logSliders"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+            <button class="btn btn-primary" id="saveRoundBtn">Save this round</button>
+            <button class="btn btn-secondary" id="useCompBtn">Use companion scores ↑</button>
+            <button class="btn btn-ghost" id="clearHistoryBtn">Clear history</button>
+          </div>
+          <p style="font-size:12.5px;color:var(--muted);margin:10px 0 0" id="logStatus" aria-live="polite">No rounds logged yet on this device.</p>
+        </div>
+        <div class="insight-card">
+          <h3 style="margin:0;font-size:16px">Where you stand</h3>
+          <div class="weakest-banner" id="weakestBanner" style="margin-top:12px">
+            <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800">Weakest dimension right now</span>
+            <p style="margin:4px 0 0;font-size:16px"><b id="weakestName">Log a round to find out</b> <span id="weakestScore" style="color:var(--muted);font-size:13.5px"></span></p>
+            <p style="margin:6px 0 0;font-size:14px;line-height:1.5" id="weakestDrill">Once you have 2+ rounds, this card names the lowest average and gives you one focused drill for it, the same one to ask the voice coach for next session.</p>
+          </div>
+          <div class="avg-bars" id="avgBars"></div>
+          <div style="margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--bg2)">
+            <strong style="font-size:14px">Suggested next session — say this to the coach</strong>
+            <p style="margin:6px 0 0;font-size:14px;line-height:1.55" id="suggestedPrompt">“Run the Singapore CFO on price, and drill me only on my weakest line. Score me after every exchange.”</p>
+            <button class="btn btn-secondary" style="margin-top:10px;padding:8px 13px;font-size:13px" id="copyDrillBtn">Copy drill prompt</button>
+          </div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><strong>Scores over time</strong><span style="font-size:13px;color:var(--muted)" id="chartMeta">Each point is one logged round • 1 = weak, 5 = strong</span></div>
+        <div id="chartArea" style="margin-top:12px"></div>
+        <div class="legend" id="chartLegend"></div>
+        <div class="history-list" id="historyList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5 · BUILD IT YOURSELF -->
+<section class="slide" data-slide="5" aria-label="Slide 5: Build it yourself — frameworks, build kit and scorecard">
+  <div class="slide-inner">
+    <span class="slide-num">05 · Build it yourself</span>
+    <h2 class="serif slide-title">Steal the whole kit</h2>
+    <p class="slide-sub">Three frameworks that cover most pushback, the full ElevenLabs coach prompt, the five setup steps, and the rubric the agent scores against. Copy, paste, demo.</p>
+
+    <div class="block">
+      <div class="block-head"><div><h3 class="serif">Three frameworks that cover 90% of pushback</h3><p>Don't memorise 50 comebacks. Learn the shape, then fill it with proof.</p></div></div>
+      <div class="frameworks">
+        <article class="fw"><span class="tag">For price &amp; ROI</span><h3>LAER + Reframe</h3><p style="color:var(--muted);font-size:14px;margin:0">Listen, Acknowledge, Explore, Respond — then reframe cost as cost of inaction.</p><ol><li>“Help me understand what ‘expensive’ is vs…”</li><li>Name the comparison honestly</li><li>Shift to outcome / payback window</li><li>Offer a smaller, reversible test</li></ol></article>
+        <article class="fw"><span class="tag">For timing</span><h3>Future-cost bridge</h3><p style="color:var(--muted);font-size:14px;margin:0">Agree now is busy, show why later is more expensive.</p><ol><li>Validate the timing pressure</li><li>Quantify delay: missed season, learning curve</li><li>Propose prep now, spend later</li><li>Lock a date, not a vague “circle back”</li></ol></article>
+        <article class="fw"><span class="tag">For trust</span><h3>Proof, not promise</h3><p style="color:var(--muted);font-size:14px;margin:0">Replace claims with a test the buyer controls.</p><ol><li>Invite scepticism: “You should test this”</li><li>Offer incrementality / holdout / pilot</li><li>Define success metric together</li><li>Put a kill-switch in writing</li></ol></article>
+      </div>
+    </div>
+
+    <div class="block" id="buildkit">
+      <div class="block-head"><div><h3 class="serif">ElevenLabs build kit — copy, paste, demo</h3><p>No API key needed for the demo. Dashboard only, 45–90 minutes. Share link is your walkthrough.</p></div><button class="btn btn-primary" id="copyPromptBtn2">Copy full prompt</button></div>
+      <div class="build">
+        <div class="prompt-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:#94a3b8">System prompt — paste into ElevenLabs Agent</span><button class="btn" style="background:white;color:#111;padding:7px 12px;font-size:12px" onclick="copyPrompt()">Copy</button></div>
+          <pre id="systemPrompt">You are a tough but fair buyer in a sales roleplay. Your persona is set by the user at the start: CFO, Procurement Lead, Agency Buyer, or CMO. Stay in character.
+
+GOAL: Help the seller practice handling objections. Do not buy easily.
+
+HOW YOU SPEAK:
+- Use short, natural sentences. Pause. Interrupt once if they ramble.
+- Use emotion naturally: [sigh] when sceptical, [pause] before a hard question.
+- One objection at a time. Escalate once after their first reply.
+
+OPENING: Introduce yourself briefly, then deliver one objection from: price, ROI, timing, competitor, or trust. Example: "Your price is 40% higher than what we pay now — why would I switch?"
+
+RULES:
+- Never break character to give feedback until the user says "score me" or 4 turns have passed.
+- If they give a vague answer, push: "That's marketing. Give me a number."
+- If they give proof + a clear next step, soften slightly: "Okay, that test could work."
+- Keep each reply under 35 words so the seller has to do the work.
+
+SCORING (when asked or after 4 turns):
+Score 1-5 on: Empathy, Curiosity (asked a good question), Proof (numbers/example), Next Step (pilot/test/date). Give one strength, one fix, and a tighter version of their best line.
+
+KNOWLEDGE: Use only the uploaded 1-page sheet for product facts. If you don't know, say "I don't have that in front of me" — do not invent pricing.
+
+END: Ask "Want another round with a harder persona?"</pre>
+        </div>
+        <div>
+          <div class="steps">
+            <div class="step"><div class="step-num">1</div><div><strong>Create the agent</strong><p style="margin:2px 0 0;color:var(--muted);font-size:14px">ElevenLabs → Conversational AI → New Agent → Blank. Name it “Objection Coach — [Persona]”.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div><strong>Pick the voice</strong><p style="margin:2px 0 0;color:var(--muted);font-size:14px">Use the <a href="#" onclick="goToSlide(2);return false">voice configurator</a> on slide 3: CFO is a middle-aged Singaporean male (deep, Stability 38), CMO is a younger Indonesian female in Jakarta (bright, Style 58), Procurement is a formal Singaporean female, 44, and Agency is a fast-talking male, 29. Search those terms in the Voice Library, then paste the settings sheet.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div><strong>Paste prompt + upload knowledge</strong><p style="margin:2px 0 0;color:var(--muted);font-size:14px">Paste the prompt on the left. Upload a 1-pager: value props, 3 proof points, pricing guardrails, pilot offer. Keep numbers in the doc, not the prompt.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div><strong>Set the LLM &amp; guardrails</strong><p style="margin:2px 0 0;color:var(--muted);font-size:14px">Bring your own LLM if you want: GPT / Claude / Gemini for reasoning, ElevenLabs for voice. Temperature 0.6–0.75. Max duration 5 min per drill.</p></div></div>
+            <div class="step"><div class="step-num">5</div><div><strong>Test &amp; share</strong><p style="margin:2px 0 0;color:var(--muted);font-size:14px">Test in playground, tweak the first objection, then Share → copy link or embed widget. No install for your audience.</p></div></div>
+          </div>
+          <div style="border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px;background:var(--surface)">
+            <h3 style="margin:0 0 8px;font-size:15px">Voice settings cheat sheet</h3>
+            <div class="table-scroll">
+            <table class="table cheat-table"><tr><th>Persona</th><th>Voice profile</th><th>Stability</th><th>Style</th><th>Feel</th></tr>
+            <tr><td><b>Singapore CFO</b></td><td>Male, 52, Singaporean</td><td>38</td><td>30</td><td>Deep, sceptical, numeric</td></tr>
+            <tr><td><b>CMO, Indonesia</b></td><td>Female, 33, Indonesian-accented</td><td>52</td><td>58</td><td>Bright, warm, growth-focused</td></tr>
+            <tr><td><b>SG Procurement</b></td><td>Female, 44, Singaporean</td><td>62</td><td>22</td><td>Clipped, formal, process-driven</td></tr>
+            <tr><td><b>Agency Buyer</b></td><td>Male, 29, KL / SG colloquial</td><td>44</td><td>66</td><td>Fast, jargon-heavy, restless</td></tr></table>
+            </div>
+            <p style="font-size:13px;margin:10px 0 0"><a href="#" onclick="goToSlide(2);return false">Open the full voice configurator ↑</a> for accent notes, sample lines and copy-ready settings per buyer.</p>
+            <p style="font-size:13px;color:var(--muted);margin:10px 0 0">Trade-off to say out loud: ElevenLabs wins on voice quality, cloning and emotion. Gemini Live is cheaper and multimodal. OpenAI Realtime is lowest latency. For a roleplay, voice <em>is</em> the product — that is why ElevenLabs fits.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-head"><div><h3 class="serif">What “good” looks like</h3><p>Use this rubric in the room after a drill, or let the agent score against it.</p></div></div>
+      <div style="border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface)">
+        <table class="table score-table"><thead><tr><th>Dimension</th><th>Weak (1–2)</th><th>Strong (4–5)</th></tr></thead><tbody>
+        <tr><td><b>Empathy</b></td><td>Argues or dismisses the concern</td><td>Names the concern back accurately before responding</td></tr>
+        <tr><td><b>Curiosity</b></td><td>No question, just a pitch</td><td>Asks one sharp diagnostic question</td></tr>
+        <tr><td><b>Proof</b></td><td>“We’re the best” with no evidence</td><td>Specific number, customer, or timeframe</td></tr>
+        <tr><td><b>Next step</b></td><td>Ends with “let me know”</td><td>Proposes a dated pilot / test with a kill-switch</td></tr>
+        </tbody></table>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button class="btn btn-primary" onclick="goToSlide(3)">Run another drill</button>
+        <button class="btn btn-secondary" onclick="copyPrompt()">Copy prompt for ElevenLabs →</button>
+      </div>
+    </div>
+
+    <footer class="slide-foot"><span>Sales Objection Coach — practice kit for an ElevenLabs Conversational AI agent. Dashboard-only build, no API key required for the demo.</span><span><a href="https://elevenlabs.io/app/talk-to?agent_id=agent_6901m72efzwhff4s8tsx9c9rcna7" target="_blank" rel="noopener">Talk to the live voice guide</a> • Tip: Record a 60-second screen capture of a live drill — that clip is more shareable than slides.</span></footer>
+  </div>
+</section>
+
+</main>
+<div class="toast" id="toast">Copied</div>
+
+<script>
+const PERSONAS=[
+ {id:'cfo',name:'Singapore CFO',initials:'CF',color:'#0f766e',voice:'Male, 52 • Deep, measured • Stability 38',desc:'Male, 52, Singapore. Direct, numbers first. Cares about SGD cost, payback, HQ approval and audit trail. Will ask for numbers twice.',traits:'SGD payback • HQ approval • Risk-averse',opening:'Show me the SGD payback in 6 months, not the global case study. Your proposal is 40% more than our current cost.'},
+ {id:'procurement',name:'Singapore Procurement Lead',initials:'PL',color:'#7c3aed',voice:'Female, 44 • Clipped, formal • Stability 62',desc:'Female, 44, Singapore. Formal and process-driven. Cares about vendor comparison, PDPA, brand safety, contract terms, and why Meta over TikTok, Shopee and Lazada.',traits:'Process • PDPA • Three-quote rule',opening:'We need three quotes and a data handling note before we can proceed. Send your pricing breakdown, SLA, and two references today.'},
+ {id:'agency',name:'Agency Buyer',initials:'AB',color:'#b45309',voice:'Male, 29 • Fast, colloquial • Style 66',desc:'Male, 29, KL / Singapore agency hub. Fast, sceptical, media fluent. Cares about CPM, incrementality, creative fatigue, and not looking bad in the next QBR.',traits:'Performance • Attribution • Client politics',opening:'My client is asking why Meta when TikTok is driving cheaper reach. Is this incremental, or are you taking credit for demand we already have?'},
+ {id:'cmo',name:'CMO, Indonesia (Regional SEA)',initials:'CM',color:'#be123c',voice:'Female, 33 • Bright, warm • Style 58',desc:'Female, 33, based in Jakarta. Cares about fragmented SEA markets and creative that works in Bahasa, Thai and Vietnamese, with results by market, not one regional average.',traits:'Jakarta base • Local creative • Board-ready story',opening:'Singapore works, but what about Jakarta and Bangkok with the same budget? I need a story I can take to the board about incremental growth.'},
+];
+const OBJECTIONS=[
+ {id:1,cat:'Price',persona:'cfo',title:'“You are 40% more expensive than TikTok.”',text:'Your CPMs are 40% higher than TikTok. Why would I pay a premium?',meaning:'They are anchoring on unit cost, not outcome cost. They need cost-per-result, not CPM.',framework:'LAER + Reframe',script:'That gap is real on CPM — can I ask what cost-per-acquisition you are seeing on each? For a retailer we worked with, higher CPM still delivered 18% lower CPA because conversion was stronger. Would you be open to judging us on CPA over a 3-week test, not CPM?',probe:'What CPA would make a premium CPM worth it for you?',pitfall:'Do not discount immediately. You will train them to push on price every time.'},
+ {id:2,cat:'ROI',persona:'cfo',title:'“Show me payback in 30 days.”',text:'If I sign this, I need payback in 30 days or finance will kill it.',meaning:'They need a short, reversible proof window, not a 12-month promise.',framework:'Proof, not promise',script:'30 days is a fair bar. What if we scoped a pilot to your highest-intent audience only, with a pre-agreed payback threshold and a kill-switch at day 21 if we miss? That way finance sees control, not risk.',probe:'What metric does finance trust most for that 30-day window?',pitfall:'Promising guaranteed ROI you cannot control.'},
+ {id:3,cat:'Timing',persona:'cmo',title:'“Budgets are locked until next FY.”',text:'I like it, but budgets are locked. Come back next financial year.',meaning:'Often “no budget” means “no priority”. Test whether it is cash or conviction.',framework:'Future-cost bridge',script:'Totally understand. If we wait until FY, we miss the learning window before your peak season. Could we do the prep and audience build now at no media cost, so you are not starting from zero when budget unlocks?',probe:'If budget appeared tomorrow, would this be top two priorities?',pitfall:'Accepting “next FY” without a date or a prep step.'},
+ {id:4,cat:'Competition',persona:'agency',title:'“Google gives us better attribution.”',text:'Our agency says Google is easier to attribute. Meta is a black box.',meaning:'They trust what they can report. Offer a measurement plan they control.',framework:'Proof, not promise',script:'Attribution confidence matters, especially in a QBR. Would a holdout test where you control the geo split help? You would see incremental lift in your own dashboard, not just ours.',probe:'What attribution window does your client actually trust?',pitfall:'Attacking Google or the agency — you will lose the room.'},
+ {id:5,cat:'Price',persona:'procurement',title:'“Can you do 20% off if we sign today?”',text:'If you can do 20% off, I can get this signed today.',meaning:'A test of your guardrails. Speed is being traded for margin.',framework:'LAER + Trade, don’t give',script:'I want to help you get this signed. I cannot do 20% on price, but I can trade: a shorter pilot term and a performance checkpoint in exchange for signing this week. That protects your price and your outcome.',probe:'Is price the blocker, or is it approval risk?',pitfall:'Saying yes to a discount with nothing in return.'},
+ {id:6,cat:'Trust',persona:'cfo',title:'“How do I know this is incremental?”',text:'How do I know these sales would not have happened anyway?',meaning:'This is a smart buyer. Welcome the question — it is a buying signal.',framework:'Proof, not promise',script:'You should ask that. The cleanest answer is a test you design: holdout, geo, or audience split, with success defined by you before we start. If it is not incremental, you should not scale it.',probe:'What level of lift would convince your team?',pitfall:'Answering with case studies alone — they want their own data.'},
+ {id:7,cat:'Timing',persona:'agency',title:'“Q4 is too busy to test anything new.”',text:'Q4 is our busiest quarter. We cannot test anything new right now.',meaning:'Risk aversion at peak. Reframe testing as protection, not distraction.',framework:'Future-cost bridge',script:'Q4 is exactly when a small, controlled test pays — you learn what works while volume is high, with a cap so it cannot hurt core. Could we ring-fence 10% as learning budget with daily checks?',probe:'What would make a Q4 test feel safe to you?',pitfall:'Pushing a full migration in Q4.'},
+ {id:8,cat:'Internal',persona:'procurement',title:'“I need to socialise this internally first.”',text:'Let me socialise this internally and get back to you.',meaning:'You have not armed your champion. They need a one-pager and cover for risk.',framework:'Champion enablement',script:'Of course — what will your CFO and legal ask first? I can give you a one-page brief that answers payback, risk, and exit terms, so you are not selling this alone.',probe:'Who is most likely to block this, and what do they care about?',pitfall:'Leaving without naming the other stakeholders.'},
+ {id:9,cat:'ROI',persona:'cmo',title:'“We tried this last quarter and it flopped.”',text:'We tried Meta last quarter and performance was weak. Why is this time different?',meaning:'Past failure, not present objection. Diagnose what actually happened.',framework:'LAER + Diagnose',script:'That matters — can I ask what the setup was last time? Audience, creative, and landing page usually explain 80% of a flop. If we can spot one fixable cause, a small re-test is very different from repeating the same plan.',probe:'What was the one metric that disappointed you most?',pitfall:'Blaming their last team or agency.'},
+ {id:10,cat:'Internal',persona:'cmo',title:'“I am not the final decision maker.”',text:'I like it, but I am not the final decision maker on this.',meaning:'You are one step from the room you need. Ask for co-selling, not a referral.',framework:'Champion enablement',script:'Helpful to know — who signs off, and what do they need to see? Would it help if we did a 20-minute session together where I handle the tough questions, so you do not carry the risk alone?',probe:'What would the decision maker need to say yes?',pitfall:'Asking “can you introduce me?” with no value for the champion.'},
+ {id:11,cat:'Competition',persona:'agency',title:'“Our client wants to consolidate to one platform.”',text:'The client wants to consolidate spend to one platform to simplify.',meaning:'Simplicity vs performance trade-off. Show the cost of consolidation.',framework:'Reframe',script:'Consolidation saves time, I get it. The risk is single-platform dependence on CPM and audience. What if we kept consolidation for reporting, but kept a challenger budget that has to earn its place monthly?',probe:'Is simplification about workload, cost, or reporting?',pitfall:'Arguing for complexity without acknowledging their workload.'},
+ {id:12,cat:'Trust',persona:'procurement',title:'“We need references and a proper SLA.”',text:'Before we go further, I need two references in our vertical and your SLA in writing.',meaning:'This is progress, not rejection. Speed and specificity build trust.',framework:'Proof, not promise',script:'Absolutely — I will send two references in your vertical today, plus the SLA with response times and exit terms. Would a 15-minute reference call this week unblock your review?',probe:'What will you ask those references first?',pitfall:'Delaying references or sending generic logos.'},
+];
+
+let activePersona = PERSONAS[0];
+let activeFilter = 'All';
+let activeObj = OBJECTIONS[0];
+let currentDrillObj = OBJECTIONS[0];
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+function copyPrompt(){
+  const txt=document.getElementById('systemPrompt').innerText;
+  navigator.clipboard.writeText(txt).then(()=>toast('System prompt copied — paste into ElevenLabs')).catch(()=>toast('Select the prompt text and copy manually'));
+}
+document.getElementById('copyPromptBtn2').addEventListener('click',copyPrompt);
+
+function renderPersonas(){
+  const grid=document.getElementById('personaGrid');
+  grid.innerHTML=PERSONAS.map(p=>`
+    <button class="persona ${p.id===activePersona.id?'active':''}" onclick="selectPersona('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="avatar" style="background:${p.color}">${p.initials}</div><span class="tag">${p.voice.split('•')[0]}</span></div>
+      <h3>${p.name}</h3><p>${p.desc}</p>
+      <p style="margin-top:8px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;font-weight:700;color:var(--accent)">${p.traits}</p>
+      <p style="margin-top:6px;font-size:12.5px">Voice: ${p.voice}</p>
+    </button>`).join('');
+  document.getElementById('activePersonaLabel').textContent='Active: '+activePersona.name;
+  document.getElementById('drillPersonaName').textContent=activePersona.name+' — live drill';
+  document.getElementById('drillPersonaDesc').textContent=activePersona.desc+' Opening: “'+activePersona.opening+'”';
+}
+window.selectPersona=function(id){
+  activePersona=PERSONAS.find(p=>p.id===id);
+  renderPersonas();
+  const filtered=OBJECTIONS.filter(o=>o.persona===id);
+  if(filtered.length){ activeObj=filtered[0]; currentDrillObj=filtered[0]; }
+  renderLibrary(); renderDetail(); resetDrill();
+};
+
+function renderFilters(){
+  const cats=['All','Price','ROI','Timing','Competition','Trust','Internal'];
+  document.getElementById('filters').innerHTML=cats.map(c=>`<button class="chip ${c===activeFilter?'active':''}" onclick="setFilter('${c}')">${c}</button>`).join('');
+}
+window.setFilter=function(c){activeFilter=c;renderFilters();renderLibrary();};
+
+function renderLibrary(){
+  let list=OBJECTIONS;
+  if(activeFilter!=='All') list=list.filter(o=>o.cat===activeFilter);
+  document.getElementById('objList').innerHTML=list.map(o=>`
+    <button class="obj-item ${o.id===activeObj.id?'active':''}" onclick="selectObj(${o.id})">
+      <span style="display:flex;justify-content:space-between;gap:8px"><span class="tag">${o.cat}</span><span>${PERSONAS.find(p=>p.id===o.persona)?.name||''}</span></span>
+      <strong style="margin-top:8px">${o.title}</strong><span>${o.framework}</span>
+    </button>`).join('') || '<p style="color:var(--muted)">No objections in this category yet.</p>';
+}
+window.selectObj=function(id){activeObj=OBJECTIONS.find(o=>o.id===id);currentDrillObj=activeObj;renderLibrary();renderDetail();resetDrill(false);};
+
+function renderDetail(){
+  const o=activeObj;
+  document.getElementById('detailPanel').innerHTML=`
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tag">${o.cat} objection</span><span class="tag">${o.framework}</span><span class="tag">${PERSONAS.find(p=>p.id===o.persona)?.name}</span></div>
+    <blockquote style="margin-top:14px">“${o.text}”</blockquote>
+    <div class="grid2">
+      <div class="box box-teal"><h4>What they really mean</h4><p>${o.meaning}</p></div>
+      <div class="box box-amber"><h4>Probe to ask next</h4><p>“${o.probe}”</p></div>
+    </div>
+    <div class="script"><h4 style="margin:0 0 8px;font-size:12px;letter-spacing:.07em;text-transform:uppercase">Steal this reply — ~25 seconds spoken</h4><p>${o.script}</p>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn btn-primary" style="padding:8px 13px;font-size:13px" onclick="useInDrill()">Use in drill →</button><button class="btn btn-secondary" style="padding:8px 13px;font-size:13px" onclick="copyText(\`${o.script.replace(/`/g,'')}\`)">Copy reply</button></div></div>
+    <p style="margin-top:12px;font-size:13.5px;color:var(--rose)"><strong>Avoid:</strong> ${o.pitfall}</p>
+  `;
+}
+window.copyText=function(t){navigator.clipboard.writeText(t).then(()=>toast('Copied to clipboard'))};
+window.useInDrill=function(){goToSlide(3);setTimeout(()=>document.getElementById('drill').scrollIntoView({behavior:'smooth'}),450);resetDrill();};
+
+function resetDrill(scroll=true){
+  const o=currentDrillObj;
+  document.getElementById('chatBox').innerHTML=`
+    <div class="bubble buyer"><strong>${activePersona.name}:</strong> ${o.text} <span style="opacity:.7;font-size:12px">[${document.getElementById('difficulty').value}]</span></div>
+    <div style="font-size:12.5px;opacity:.8">Your turn — respond out loud in ElevenLabs, or type below for a text score.</div>`;
+  document.getElementById('feedbackArea').innerHTML='';
+  document.getElementById('responseInput').value='';
+}
+document.getElementById('newObjectionBtn').addEventListener('click',()=>{
+  const pool=OBJECTIONS.filter(o=>o.persona===activePersona.id);
+  const list=pool.length?pool:OBJECTIONS;
+  currentDrillObj=list[Math.floor(Math.random()*list.length)];
+  activeObj=currentDrillObj; renderLibrary(); renderDetail(); resetDrill();
+});
+document.getElementById('hintBtn').addEventListener('click',()=>{
+  const box=document.getElementById('chatBox');
+  box.innerHTML+=`<div class="bubble coach"><strong>Coach hint:</strong> Try ${currentDrillObj.framework}. Start with empathy, ask: “${currentDrillObj.probe}” and end with a small test.</div>`;
+  box.scrollTop=box.scrollHeight;
+});
+document.getElementById('exampleBtn').addEventListener('click',()=>{
+  document.getElementById('responseInput').value=currentDrillObj.script;
+});
+document.getElementById('clearBtn').addEventListener('click',()=>{document.getElementById('responseInput').value='';document.getElementById('feedbackArea').innerHTML='';});
+document.getElementById('difficulty').addEventListener('change',resetDrill);
+
+document.getElementById('scoreBtn').addEventListener('click',()=>{
+  const val=document.getElementById('responseInput').value.trim();
+  if(!val){toast('Write a response first');return;}
+  const low=val.toLowerCase();
+  const words=val.split(/\s+/).length;
+  const empathy=/understand|hear you|makes sense|appreciate|fair point|totally|i get/.test(low)?5:(words>15?3:2);
+  const curiosity=val.includes('?')?5:(/what|how|can i ask|help me understand/.test(low)?4:1);
+  const proof=/\d+%|\d+|example|retailer|customer|last quarter|case|result|cpa|roi|payback/.test(low)?5:(words>40?3:2);
+  const nextStep=/pilot|test|trial|next step|call|meeting|date|week|would you be open|kill-switch|holdout/.test(low)?5:2;
+  const overall=Math.round((empathy+curiosity+proof+nextStep)/4*20);
+  const chat=document.getElementById('chatBox');
+  chat.innerHTML+=`<div class="bubble you"><strong>You:</strong> ${val.replace(/</g,'&lt;')}</div>`;
+  if(document.getElementById('difficulty').value!=='warm'){
+    chat.innerHTML+=`<div class="bubble buyer"><strong>${activePersona.name}:</strong> ${nextStep>=4?'Okay — that test could work. Send me the one-pager and let us look at dates.':'That is still vague. Give me a specific next step and a number I can take to my team.'}</div>`;
+  }
+  const strengths=[]; const fixes=[];
+  if(empathy>=4) strengths.push('You acknowledged the concern before pitching.'); else fixes.push('Start by naming their concern back — “I hear you on cost” — before you answer.');
+  if(curiosity>=4) strengths.push('You asked a diagnostic question, which keeps you in control.'); else fixes.push('Add one question. No question = monologue, and buyers tune out.');
+  if(proof>=4) strengths.push('You used proof / a number, not just a claim.'); else fixes.push('Add a specific proof point: a %, a timeframe, or a comparable customer.');
+  if(nextStep>=4) strengths.push('You closed with a concrete, low-risk next step.'); else fixes.push('End with a dated, reversible next step: a 2–3 week pilot with a kill-switch.');
+  document.getElementById('feedbackArea').innerHTML=`
+    <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><strong>Coach score</strong><span style="font-size:28px;font-weight:800">${overall}<span style="font-size:14px;color:var(--muted)">/100</span></span></div>
+      <div class="scorebars">
+        ${[['Empathy',empathy],['Curiosity',curiosity],['Proof',proof],['Next step',nextStep]].map(([k,v])=>`<div class="bar-row"><span>${k}</span><div class="bar"><i style="width:${v*20}%"></i></div><b>${v}/5</b></div>`).join('')}
+      </div>
+      <div class="grid2">
+        <div class="box box-teal"><h4>What worked</h4><p>${strengths.join(' ')||'You got words down — now add structure.'}</p></div>
+        <div class="box box-amber"><h4>Fix next round</h4><p>${fixes.join(' ')||'Strong shape — try it again with a tougher persona.'}</p></div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:10px">Tighter version: “${currentDrillObj.script.slice(0,180)}…” — say it out loud once, then run it again in voice.</p>
+    </div>`;
+});
+
+/* Voice guide — text tour (mirrors the live ElevenLabs guide) */
+const GUIDE_LINK='https://elevenlabs.io/app/talk-to?agent_id=agent_6901m72efzwhff4s8tsx9c9rcna7';
+const guideLinkBtn=document.getElementById('copyGuideLinkBtn');
+if(guideLinkBtn) guideLinkBtn.addEventListener('click',()=>{navigator.clipboard.writeText(GUIDE_LINK).then(()=>toast('Guide link copied — share it anywhere')).catch(()=>toast('Copy the guide link from the Call button'))});
+const guidePromptBtn=document.getElementById('copyGuidePromptBtn');
+if(guidePromptBtn) guidePromptBtn.addEventListener('click',()=>{const t=document.getElementById('guidePrompt').innerText;navigator.clipboard.writeText(t).then(()=>toast('Guide prompt copied — paste into ElevenLabs')).catch(()=>toast('Open the prompt and copy manually'))});
+function guideSay(html){const box=document.getElementById('guideChat');if(!box) return;box.innerHTML+=html;box.scrollTop=box.scrollHeight;}
+document.querySelectorAll('[data-guide-action]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const action=btn.getAttribute('data-guide-action');
+    if(action==='tour'){
+      guideSay('<div class="bubble you"><strong>You:</strong> Give me the 60-second tour.</div>');
+      guideSay('<div class="bubble buyer"><strong>Guide:</strong> Three steps. One: pick a buyer, Singapore CFO, Regional CMO for SEA, Singapore Procurement Lead, or Agency Buyer. Two: pick an objection, price, ROI, timing, or trust. Three: answer out loud and get scored on empathy, curiosity, proof, and next step. Want to try the CFO on price?</div>');
+    } else if(action==='try'){
+      guideSay('<div class="bubble you"><strong>You:</strong> Let me try the CFO.</div>');
+      guideSay('<div class="bubble buyer"><strong>Singapore CFO:</strong> Your Meta ads are too expensive in SGD. My HQ will not approve this. Convince me in two sentences, in the drill just below.</div>');
+      selectPersona('cfo');
+      setTimeout(()=>document.getElementById('drill').scrollIntoView({behavior:'smooth'}),350);
+    } else if(action==='feedback'){
+      guideSay('<div class="bubble you"><strong>You:</strong> I want to give feedback.</div>');
+      guideSay('<div class="bubble buyer"><strong>Guide:</strong> Thank you. Two questions, one at a time. First: what was unclear on this page? For the full conversation, call the live guide above and tell it directly, that is how this page improves.</div>');
+    }
+  });
+});
+
+/* Coaching allowance calculator — Creator pool: 275 agent minutes */
+const sessionLengthEl=document.getElementById('sessionLength');
+function updateAllowanceCalc(){
+  const per=parseInt(sessionLengthEl.value,10)||5;
+  const total=275;
+  const sessions=Math.floor(total/per);
+  const leftover=total-(sessions*per);
+  document.getElementById('calcResult').innerHTML='You get about <b>'+sessions+' session'+(sessions===1?'':'s')+'</b> from 275 minutes, with <b>'+leftover+' minute'+(leftover===1?'':'s')+'</b> left over.';
+}
+if(sessionLengthEl){ sessionLengthEl.addEventListener('change',updateAllowanceCalc); updateAllowanceCalc(); }
+
+/* ===== Companion dashboard ===== */
+const DIMS=[{key:'empathy',label:'Empathy',color:'#0f766e'},{key:'curiosity',label:'Curiosity',color:'#b45309'},{key:'proof',label:'Proof',color:'#be123c'},{key:'next',label:'Next Step',color:'#1d4ed8'}];
+const SECOND_PERSON={
+ cfo:{name:'Singapore Procurement Lead',text:'“If CFO is asking on price, I need the breakdown, SLA and two references as well. Price alone won\'t clear my review.”'},
+ procurement:{name:'Singapore CFO',text:'“Procurement handles process, I handle the number. Show me payback in SGD or this stops here.”'},
+ cmo:{name:'Singapore CFO',text:'“Brand story is fine, but I sign the budget. What is the payback window in SGD?”'},
+ agency:{name:'Client Lead (via Agency Buyer)',text:'“The agency can recommend, I decide. Is this incremental, or are we paying for demand we already have?”'}
+};
+const ESCALATION_LINES=[
+ 'Show me the SGD payback. Not the global deck, the local number.',
+ 'That is still marketing. Give me a specific number, a customer, and a date I can take to my team.',
+ 'I am bringing someone else in. You will need to convince both of us now, not just me.'
+];
+let compScores={empathy:0,curiosity:0,proof:0,next:0};
+let compExchange=1;
+let escalationOn=false;
+
+function renderCompMeters(){
+  const wrap=document.getElementById('compMeters'); if(!wrap) return;
+  wrap.innerHTML=DIMS.map(d=>{
+    const v=compScores[d.key];
+    return `<div class="meter-row"><div class="meter-row-head"><label>${d.label}</label><b>${v}/5</b></div><div class="meter-track"><i style="width:${v*20}%;background:${d.color}"></i></div><div class="pips">${[0,1,2,3,4,5].map(n=>`<button class="pip ${n===v?'on':''}" onclick="setCompScore('${d.key}',${n})" aria-label="${d.label} ${n} of 5">${n}</button>`).join('')}</div></div>`;
+  }).join('');
+  const total=DIMS.reduce((s,d)=>s+compScores[d.key],0);
+  document.getElementById('compOverall').textContent=Math.round(total/20*100);
+}
+window.setCompScore=function(key,val){compScores[key]=val;renderCompMeters();};
+
+function syncCompanion(){
+  const pSel=document.getElementById('compPersonaSel');
+  const oSel=document.getElementById('compObjSel');
+  if(!pSel) return;
+  pSel.innerHTML=PERSONAS.map(p=>`<option value="${p.id}" ${p.id===activePersona.id?'selected':''}>${p.name}</option>`).join('');
+  const pool=OBJECTIONS.filter(o=>o.persona===activePersona.id);
+  const list=pool.length?pool:OBJECTIONS;
+  oSel.innerHTML=list.map(o=>`<option value="${o.id}" ${o.id===activeObj.id?'selected':''}>${o.cat} — ${o.title}</option>`).join('');
+  document.getElementById('compAvatar').textContent=activePersona.initials;
+  document.getElementById('compAvatar').style.background=activePersona.color;
+  document.getElementById('compBuyerName').textContent=activePersona.name;
+  document.getElementById('compBuyerMeta').textContent=activePersona.traits;
+  document.getElementById('compObjTag').textContent=activeObj.cat;
+  document.getElementById('compQuote').textContent='“'+activeObj.text+'”';
+  document.getElementById('compFeedBuyer').textContent=activePersona.name+':';
+  document.getElementById('tipMeaning').textContent=activeObj.meaning;
+  document.getElementById('tipSay').textContent='“'+activeObj.script.split('.')[0]+'.”';
+  document.getElementById('tipAsk').textContent='“'+activeObj.probe+'”';
+  document.getElementById('tipProof').textContent='Use: '+activeObj.framework+'. Offer a small, dated pilot/test the buyer controls, with one agreed metric and a kill-switch.';
+  const sp=SECOND_PERSON[activePersona.id]||SECOND_PERSON.cfo;
+  document.getElementById('secondPersonText').innerHTML='<strong>'+sp.name+' joins:</strong> '+sp.text;
+}
+document.getElementById('compPersonaSel').addEventListener('change',e=>{selectPersona(e.target.value);syncCompanion();});
+document.getElementById('compObjSel').addEventListener('change',e=>{selectObj(parseInt(e.target.value,10));syncCompanion();});
+
+document.getElementById('pauseBtn').addEventListener('click',()=>{
+  document.getElementById('tipCard').hidden=false;
+  document.getElementById('pauseBtn').hidden=true;
+  document.getElementById('resumeBtn').hidden=false;
+  toast('Paused — tip card shown. Say “pause” on the call to match it.');
+});
+document.getElementById('resumeBtn').addEventListener('click',()=>{
+  document.getElementById('tipCard').hidden=true;
+  document.getElementById('pauseBtn').hidden=false;
+  document.getElementById('resumeBtn').hidden=true;
+});
+document.getElementById('resetCompBtn').addEventListener('click',()=>{
+  compScores={empathy:0,curiosity:0,proof:0,next:0}; compExchange=1; escalationOn=false;
+  document.getElementById('escToggle').setAttribute('aria-pressed','false');
+  document.getElementById('escToggleLabel').textContent='Off — standard buyer';
+  document.getElementById('secondPersonCard').hidden=true;
+  document.getElementById('compFeedLine').textContent=ESCALATION_LINES[0];
+  updateExchangeUI(); renderCompMeters(); toast('Dashboard reset for a new round');
+});
+function updateExchangeUI(){
+  document.getElementById('compExchangeLabel').textContent='Exchange '+compExchange+' of 3'+(escalationOn?' • Escalation ON':'');
+  [1,2,3].forEach(n=>document.getElementById('escStep'+n).classList.toggle('on', n<=compExchange && (escalationOn||n===1)));
+  if(!escalationOn){ document.getElementById('escStep1').classList.add('on'); }
+}
+document.getElementById('nextExchangeBtn').addEventListener('click',()=>{
+  if(compExchange<3) compExchange++;
+  document.getElementById('compFeedLine').textContent=ESCALATION_LINES[compExchange-1];
+  if(escalationOn && compExchange>=3){ document.getElementById('secondPersonCard').hidden=false; }
+  else if(!escalationOn && compExchange>=3){ document.getElementById('compFeedLine').textContent='Final push: “Last chance — give me your best next step, with a date.”'; }
+  updateExchangeUI();
+  if(compExchange===3) toast(escalationOn?'Escalation: second person has joined the room':'Exchange 3 — final push');
+});
+document.getElementById('escToggle').addEventListener('click',function(){
+  escalationOn=!escalationOn;
+  this.setAttribute('aria-pressed', String(escalationOn));
+  document.getElementById('escToggleLabel').textContent=escalationOn?'On — gets tougher + 2nd person':'Off — standard buyer';
+  if(!escalationOn) document.getElementById('secondPersonCard').hidden=true;
+  if(escalationOn && compExchange>=3) document.getElementById('secondPersonCard').hidden=false;
+  updateExchangeUI(); toast(escalationOn?'Escalation mode on':'Escalation mode off');
+});
+
+/* ===== Progress tracking (localStorage) ===== */
+const LS_KEY='soc_progress_v1';
+const DRILLS={
+ empathy:{title:'Mirror & Label drill',text:'For 3 rounds, you may only mirror the buyer’s last 3 words and label the feeling (“Sounds like budget pressure is the real worry”) before you answer. No pitch until the buyer says “that’s right”.',prompt:'“Run the Singapore CFO on price, and drill me only on Empathy. Mirror-and-label first, score me after every exchange.”'},
+ curiosity:{title:'Question Ladder drill',text:'Ask 3 questions before any proof: situation, impact, then what success looks like in SGD. The coach fails the round if you pitch before question 3.',prompt:'“Run the Singapore CFO on price, and drill me only on Curiosity. I must ask 3 questions before I pitch. Score me after every exchange.”'},
+ proof:{title:'Proof in 20 seconds drill',text:'Every answer must contain one number, one comparable customer type, and one timeframe in under 20 seconds. No adjectives without a number attached.',prompt:'“Run the Singapore CFO on price, and drill me only on Proof. Every answer needs a number, a customer type and a timeframe. Score me after every exchange.”'},
+ next:{title:'Close with a Date drill',text:'End every exchange with a dated, reversible step: pilot length, success metric, review date and kill-switch. Vague closes (“let me know”) score 0.',prompt:'“Run the Singapore CFO on price, and drill me only on Next Step. I must close every exchange with a dated pilot and kill-switch. Score me after every exchange.”'}
+};
+let progressData=[];
+try{ progressData=JSON.parse(localStorage.getItem(LS_KEY)||'[]'); if(!Array.isArray(progressData)) progressData=[]; }catch(e){ progressData=[]; }
+let logScores={empathy:3,curiosity:3,proof:3,next:3};
+function renderLogSliders(){
+  const wrap=document.getElementById('logSliders');
+  wrap.innerHTML=DIMS.map(d=>`<div class="range-row"><span>${d.label}</span><input type="range" min="1" max="5" step="1" value="${logScores[d.key]}" oninput="logScores['${d.key}']=parseInt(this.value,10);document.getElementById('logVal-${d.key}').textContent=this.value"><b id="logVal-${d.key}">${logScores[d.key]}</b></div>`).join('');
+  const lb=document.getElementById('logBuyer');
+  lb.innerHTML=PERSONAS.map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
+  const dEl=document.getElementById('logDate'); if(!dEl.value) dEl.value=new Date().toISOString().slice(0,10);
+}
+function saveProgress(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(progressData)); }catch(e){} }
+function renderProgress(){
+  const count=progressData.length;
+  document.getElementById('logStatus').textContent=count? count+' round'+(count===1?'':'s')+' saved in this browser. Last logged '+(progressData[count-1].date||'')+'.' : 'No rounds logged yet on this device.';
+  const avgs={};
+  DIMS.forEach(d=>{ avgs[d.key]=count? progressData.reduce((s,r)=>s+(r.scores[d.key]||0),0)/count : 0; });
+  document.getElementById('avgBars').innerHTML=DIMS.map(d=>`<div class="bar-row"><span>${d.label}</span><div class="bar"><i style="width:${avgs[d.key]*20}%;background:${d.color}"></i></div><b>${count?avgs[d.key].toFixed(1):'—'}</b></div>`).join('');
+  if(count>=1){
+    let weakest=DIMS[0]; DIMS.forEach(d=>{ if(avgs[d.key]<avgs[weakest.key]) weakest=d; });
+    document.getElementById('weakestName').textContent=weakest.label;
+    document.getElementById('weakestScore').textContent='· avg '+avgs[weakest.key].toFixed(1)+' / 5 over '+count+' round'+(count===1?'':'s');
+    const drill=DRILLS[weakest.key];
+    document.getElementById('weakestDrill').innerHTML='<strong>'+drill.title+':</strong> '+drill.text;
+    document.getElementById('suggestedPrompt').textContent=drill.prompt;
+  } else {
+    document.getElementById('weakestName').textContent='Log a round to find out';
+    document.getElementById('weakestScore').textContent='';
+    document.getElementById('weakestDrill').textContent='Once you have 2+ rounds, this card names the lowest average and gives you one focused drill for it, the same one to ask the voice coach for next session.';
+  }
+  const area=document.getElementById('chartArea');
+  document.getElementById('chartLegend').innerHTML=DIMS.map(d=>`<span><i style="background:${d.color}"></i>${d.label}</span>`).join('')+(count?' <span style="color:var(--muted)">Dashed = weakest line</span>':'');
+  if(count===0){
+    area.innerHTML='<div style="border:1px dashed var(--line2);border-radius:14px;padding:22px;text-align:center;color:var(--muted);font-size:14px">No data yet. Log your first round on the left and your lines will appear here, session by session.</div>';
+  } else {
+    const W=720,H=220,padL=28,padR=12,padT=14,padB=28, iw=W-padL-padR, ih=H-padT-padB;
+    const x=i=> count===1? padL+iw/2 : padL+ (i/(count-1))*iw;
+    const y=v=> padT+ ih - ((v-1)/4)*ih;
+    let weakestKey=null; if(count>=1){ let mn=99; DIMS.forEach(d=>{ if(avgs[d.key]<mn){mn=avgs[d.key]; weakestKey=d.key;} }); }
+    let svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" role="img" aria-label="Progress chart of scores over time">`;
+    for(let g=1;g<=5;g++){ svg+=`<line x1="${padL}" y1="${y(g)}" x2="${W-padR}" y2="${y(g)}" stroke="var(--line)" stroke-width="1"/><text x="6" y="${y(g)+4}" font-size="11" fill="var(--muted)">${g}</text>`; }
+    progressData.forEach((r,i)=>{ svg+=`<text x="${x(i)}" y="${H-6}" font-size="10" fill="var(--muted)" text-anchor="middle">${(r.date||'').slice(5)||('R'+(i+1))}</text>`; });
+    DIMS.forEach(d=>{
+      const pts=progressData.map((r,i)=>x(i)+','+y(r.scores[d.key]||1)).join(' ');
+      const dash=d.key===weakestKey?' stroke-dasharray="6 4" stroke-width="3"':' stroke-width="2"';
+      svg+=`<polyline points="${pts}" fill="none" stroke="${d.color}"${dash} stroke-linejoin="round" stroke-linecap="round"/>`;
+      progressData.forEach((r,i)=>{ svg+=`<circle cx="${x(i)}" cy="${y(r.scores[d.key]||1)}" r="4" fill="${d.color}"/>`; });
+    });
+    svg+='</svg>'; area.innerHTML=svg;
+  }
+  document.getElementById('historyList').innerHTML=progressData.slice().reverse().map((r,ri)=>{
+    const idx=progressData.length-1-ri;
+    return `<div class="history-item"><span><strong>${r.date||''}</strong> · ${r.buyer||''}</span><span class="mono" style="font-size:12.5px">E ${r.scores.empathy} · C ${r.scores.curiosity} · P ${r.scores.proof} · N ${r.scores.next} · <b>${Math.round((r.scores.empathy+r.scores.curiosity+r.scores.proof+r.scores.next)/20*100)}/100</b></span><button class="btn btn-ghost" style="padding:6px 10px;font-size:12px" onclick="deleteRound(${idx})">Delete</button></div>`;
+  }).join('');
+}
+window.deleteRound=function(idx){ progressData.splice(idx,1); saveProgress(); renderProgress(); toast('Round deleted'); };
+document.getElementById('saveRoundBtn').addEventListener('click',()=>{
+  const entry={date:document.getElementById('logDate').value||new Date().toISOString().slice(0,10), buyer:document.getElementById('logBuyer').value, scores:{...logScores}};
+  progressData.push(entry); progressData.sort((a,b)=>(a.date||'').localeCompare(b.date||'')); saveProgress(); renderProgress(); toast('Round saved — chart and weakest line updated');
+});
+document.getElementById('useCompBtn').addEventListener('click',()=>{
+  DIMS.forEach(d=>{ logScores[d.key]=Math.max(1, compScores[d.key]||3); });
+  renderLogSliders(); toast('Companion scores copied into the log form — check and Save');
+  document.getElementById('progress').scrollIntoView({behavior:'smooth'});
+});
+document.getElementById('clearHistoryBtn').addEventListener('click',()=>{ progressData=[]; saveProgress(); renderProgress(); toast('Progress history cleared on this device'); });
+document.getElementById('copyDrillBtn').addEventListener('click',()=>{ const t=document.getElementById('suggestedPrompt').textContent; navigator.clipboard.writeText(t).then(()=>toast('Drill prompt copied — say it to the voice coach')).catch(()=>toast('Copy the drill prompt manually')); });
+const _origSelectPersona=window.selectPersona;
+window.selectPersona=function(id){ _origSelectPersona(id); syncCompanion(); };
+const _origSelectObj=window.selectObj;
+window.selectObj=function(id){ _origSelectObj(id); syncCompanion(); };
+
+/* ===== Voice configurator ===== */
+const VOICE_PROFILES=[
+ {id:'cfo',displayName:'Daniel — Singapore CFO',roleTag:'CFO · Singapore',gender:'Male',age:52,ageLabel:'Middle-aged',location:'Singapore',desc:'A finance chief who has seen every deck. He does not raise his voice, he lowers it. Every claim gets the same reply: show me the number, in SGD, with the payback window.',accent:'Singaporean English, business-formal. Clean vowels, clipped endings, very little slang while he is in control.',sound:'Low baritone, chest resonance. Slow, measured pace with deliberate pauses before a hard question.',local:'Light Singlish, and only when impatient: “lah” at the end of a dismissal, “can or not?” as a direct challenge.',search:'Voice Library: search “Singaporean male middle-aged business” — pick a deep, low-energy read, not a narrator voice.',sample:'“Look, your number is in SGD lah. I cannot take this to HQ without payback. Can or not — show me six months, not the global story.”',stability:38,similarity:75,style:30,boost:true,delivery:'Slow · Low pitch · Low energy',dna:[['Authority',92],['Warmth',38],['Pace',35],['Formality',88]]},
+ {id:'cmo',displayName:'Ayu — CMO, Indonesia',roleTag:'CMO · Jakarta, Indonesia',gender:'Female',age:33,ageLabel:'Younger',location:'Jakarta, Indonesia',desc:'A younger regional CMO based in Jakarta. Warm in conversation, sharp on local relevance. She will forgive a higher price, she will not forgive creative that feels imported and generic.',accent:'Indonesian-accented English, fluid and warm. Clear international business English with a Jakarta cadence.',sound:'Medium-high, bright voice. Brisk, collaborative pace, rises at the end of questions, laughs easily, then pivots hard.',local:'Occasional Bahasa woven in naturally: “gimana” (how about), “boleh” (can do), and market references to Jakarta and Surabaya.',search:'Voice Library: search “Indonesian female young business” or “Southeast Asian female, warm” — pick bright and conversational, not formal newsreader.',sample:'“Singapore story is nice, but gimana for Jakarta? Our audience di sini is different — I need creative in Bahasa that actually lands, boleh?”',stability:52,similarity:80,style:58,boost:true,delivery:'Brisk · Bright pitch · High warmth',dna:[['Authority',62],['Warmth',88],['Pace',72],['Formality',48]]},
+ {id:'procurement',displayName:'Mei Ling — Singapore Procurement Lead',roleTag:'Procurement · Singapore',gender:'Female',age:44,ageLabel:'Middle-aged',location:'Singapore',desc:'Process is her protection. Polite, precise, and immovable until the paperwork is right: comparison, PDPA, SLA, references. Win her checklist and she becomes your internal sponsor.',accent:'Singaporean English, formal and clipped. The most standard, least colloquial voice of the four.',sound:'Medium pitch, crisp consonants. Steady, checklist pace. Short sentences, no filler, names dates and documents.',local:'Minimal Singlish — almost none. She corrects vagueness instead: “Please put that in writing.”',search:'Voice Library: search “Singaporean female professional formal” — pick a clear, controlled, mid-pitch voice.',sample:'“Before pricing, I need three quotes, your PDPA note, the SLA and two references in our vertical. Please send them today, in writing.”',stability:62,similarity:85,style:22,boost:false,delivery:'Steady · Crisp · Very formal',dna:[['Authority',84],['Warmth',42],['Pace',50],['Formality',95]]},
+ {id:'agency',displayName:'Jason — Agency Buyer, KL',roleTag:'Agency Buyer · Kuala Lumpur / Singapore',gender:'Male',age:29,ageLabel:'Young adult',location:'Kuala Lumpur / Singapore',desc:'The youngest voice in the room and the fastest. He is performing for a client who is not on the call, so he pushes for a line he can repeat in the next QBR without getting challenged.',accent:'Malaysian–Singaporean colloquial English (Manglish / Singlish mix). Fast, informal, jumps between English and local particles.',sound:'Medium, lighter pitch. Fast pace, interrupts, short bursts, energy spikes on CPM and attribution.',local:'Heaviest local flavour of the four: “lah”, “lor”, “meh”, “wor” throughout — natural, not a caricature when the voice is right.',search:'Voice Library: search “Malaysian male young casual” or “Singaporean male young” — pick energetic and conversational, not corporate.',sample:'“Eh, client ask why Meta lah — TikTok cheaper reach wor. Is this incremental or not? Don’t give me the deck answer lor.”',stability:44,similarity:70,style:66,boost:true,delivery:'Fast · Lighter pitch · High energy',dna:[['Authority',48],['Warmth',58],['Pace',92],['Formality',28]]}
+];
+let activeVoiceId='cfo';
+let vcBoostOn=true;
+function voiceById(id){return VOICE_PROFILES.find(v=>v.id===id)||VOICE_PROFILES[0];}
+function renderVoiceGrid(){
+  const grid=document.getElementById('voiceGrid'); if(!grid) return;
+  grid.innerHTML=VOICE_PROFILES.map(v=>{
+    const p=PERSONAS.find(x=>x.id===v.id);
+    return `<button class="voice-card ${v.id===activeVoiceId?'active':''}" onclick="selectVoice('${v.id}',true)"><div style="display:flex;justify-content:space-between;align-items:start"><div class="avatar" style="background:${p?p.color:v.color||'#0f766e'}">${p?p.initials:''}</div><span class="tag">${v.gender} · ${v.age}</span></div><h3>${v.displayName}</h3><p>${v.location} — ${v.accent.split('.')[0]}.</p><div class="voice-meta"><span>${v.ageLabel}</span><span>${v.delivery}</span></div><p style="margin-top:8px;font-size:12.5px">Stability ${v.stability} · Style ${v.style}</p></button>`;
+  }).join('');
+  const tbody=document.getElementById('vcCompareBody');
+  if(tbody) tbody.innerHTML=VOICE_PROFILES.map(v=>`<tr><td><strong>${v.displayName}</strong></td><td>${v.gender}, ${v.age} (${v.ageLabel})<br><span style="color:var(--muted)">${v.location}</span></td><td>${v.accent}<br><span style="color:var(--muted)">${v.local}</span></td><td>${v.sound}</td><td class="mono" style="font-size:12.5px">Stab ${v.stability} · Sim ${v.similarity} · Style ${v.style}</td></tr>`).join('');
+}
+function updateVcOutput(){
+  const v=voiceById(activeVoiceId);
+  const stab=document.getElementById('vcStability').value;
+  const sim=document.getElementById('vcSimilarity').value;
+  const sty=document.getElementById('vcStyle').value;
+  document.getElementById('vcStabilityVal').textContent=stab;
+  document.getElementById('vcSimilarityVal').textContent=sim;
+  document.getElementById('vcStyleVal').textContent=sty;
+  document.getElementById('vcOutput').textContent=
+'Buyer: '+v.displayName+' ('+v.gender+', '+v.age+', '+v.location+')\n'+
+'Voice search: '+v.search+'\n'+
+'Accent direction: '+v.accent+' '+v.local+'\n'+
+'Stability: '+stab+'  |  Similarity boost: '+sim+'  |  Style: '+sty+'\n'+
+'Speaker boost: '+(vcBoostOn?'On':'Off')+'\n'+
+'Delivery: '+v.sound;
+  const boostBtn=document.getElementById('vcBoost');
+  boostBtn.setAttribute('aria-pressed',String(vcBoostOn));
+  boostBtn.querySelector('span:last-child').textContent='Speaker boost: '+(vcBoostOn?'On':'Off');
+}
+function renderVoiceProfile(){
+  const v=voiceById(activeVoiceId);
+  const p=PERSONAS.find(x=>x.id===v.id);
+  document.getElementById('voiceActiveLabel').textContent='Now configuring: '+(p?p.name:v.displayName);
+  document.getElementById('vcAvatar').textContent=p?p.initials:'';
+  document.getElementById('vcAvatar').style.background=p?p.color:'#0f766e';
+  document.getElementById('vcRoleTag').textContent=v.roleTag;
+  document.getElementById('vcName').textContent=v.displayName;
+  document.getElementById('vcDemo').textContent=v.gender+' · '+v.age+' · '+v.ageLabel+' · '+v.location;
+  document.getElementById('vcDesc').textContent=v.desc;
+  document.getElementById('vcAccent').textContent=v.accent;
+  document.getElementById('vcSound').textContent=v.sound;
+  document.getElementById('vcLocal').textContent=v.local;
+  document.getElementById('vcSearch').textContent=v.search;
+  document.getElementById('vcSample').textContent=v.sample;
+  document.getElementById('vcDna').innerHTML=v.dna.map(([k,val])=>`<div class="dna-row"><span>${k}</span><div class="dna-track"><i style="width:${val}%"></i></div><b>${val}</b></div>`).join('');
+  const wave=document.getElementById('vcWave');
+  const heights=v.dna[2][1]>80?[10,22,14,26,18,28,12,24,16,27,11,20]:v.dna[2][1]>60?[8,16,12,22,14,24,10,18,13,21,9,15]:[6,10,7,14,8,12,6,11,7,13,6,9];
+  wave.innerHTML=heights.map(h=>`<i style="height:${h}px"></i>`).join('');
+  document.getElementById('vcStability').value=v.stability;
+  document.getElementById('vcSimilarity').value=v.similarity;
+  document.getElementById('vcStyle').value=v.style;
+  vcBoostOn=v.boost;
+  renderVoiceGrid(); updateVcOutput();
+}
+window.selectVoice=function(id,alsoPersona){
+  activeVoiceId=id; renderVoiceProfile();
+  if(alsoPersona && PERSONAS.find(p=>p.id===id) && activePersona.id!==id){ selectPersona(id); }
+};
+window.syncVoiceFromPersona=function(id){ if(id!==activeVoiceId){ activeVoiceId=id; renderVoiceProfile(); } };
+['vcStability','vcSimilarity','vcStyle'].forEach(elId=>{ const el=document.getElementById(elId); if(el) el.addEventListener('input',updateVcOutput); });
+document.getElementById('vcBoost').addEventListener('click',()=>{ vcBoostOn=!vcBoostOn; updateVcOutput(); });
+document.getElementById('vcReset').addEventListener('click',()=>{ renderVoiceProfile(); toast('Voice reset to '+voiceById(activeVoiceId).displayName+' defaults'); });
+document.getElementById('vcCopyBtn').addEventListener('click',()=>{ const t=document.getElementById('vcOutput').innerText; navigator.clipboard.writeText(t).then(()=>toast('Voice settings copied — paste into ElevenLabs')).catch(()=>toast('Select the settings text and copy manually')); });
+const _origSelectPersona2=window.selectPersona;
+window.selectPersona=function(id){ _origSelectPersona2(id); syncVoiceFromPersona(id); };
+
+renderPersonas(); renderFilters(); renderLibrary(); renderDetail(); resetDrill(); renderCompMeters(); syncCompanion(); updateExchangeUI(); renderLogSliders(); renderProgress(); renderVoiceProfile();
+</script>
+
+<script>
+(function(){
+  var reps=document.getElementById('tamReps');
+  if(reps){
+    var out=document.getElementById('tamRepsOut'), wallet=document.getElementById('tamWallet'), lvl=document.getElementById('tamLevelName');
+    function fmt(n){return '$'+n.toLocaleString('en-US');}
+    function levelName(n){
+      if(n<50) return 'Level: Squad. Small team, every rep carries real quota weight.';
+      if(n<200) return 'Level: Platoon. Big enough that one bad quarter pays for a lot of practice.';
+      if(n<500) return 'Level: Battalion. Kickoff season alone is a serious budget line.';
+      return 'Level: Full army. At this size, training spend is a board conversation.';
+    }
+    function upd(){
+      var n=parseInt(reps.value,10)||100;
+      out.textContent=n+' reps';
+      wallet.innerHTML=fmt(n*2000)+' \u2013 '+fmt(n*2998)+' <small>/ year</small>';
+      lvl.textContent=levelName(n);
+    }
+    reps.addEventListener('input',upd); upd();
+  }
+  var nums=document.querySelectorAll('#market .num[data-count]');
+  if(!nums.length) return;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function render(el,t){
+    var target=parseFloat(el.getAttribute('data-count')), dec=parseInt(el.getAttribute('data-decimals')||'0',10);
+    var pre=el.getAttribute('data-prefix')||'', suf=el.getAttribute('data-suffix')||'';
+    var val=target*t;
+    var txt=dec?val.toFixed(dec):Math.round(val).toLocaleString('en-US');
+    el.innerHTML=pre+txt+(suf?'<small>'+suf+'</small>':'');
+  }
+  if(reduce || !('IntersectionObserver' in window)){ nums.forEach(function(el){render(el,1);}); return; }
+  var seen=new WeakSet();
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting||seen.has(en.target)) return; seen.add(en.target);
+      var el=en.target, start=null;
+      function step(ts){ if(!start) start=ts; var t=Math.min(1,(ts-start)/1100); render(el, 1-Math.pow(1-t,3)); if(t<1) requestAnimationFrame(step); }
+      requestAnimationFrame(step);
+    });
+  },{threshold:.4});
+  nums.forEach(function(el){ io.observe(el); });
+})();
+</script>
+
+<script>
+/* ===== Slide deck navigation ===== */
+(function(){
+  var deck=document.getElementById('deck');
+  var slides=Array.prototype.slice.call(deck.querySelectorAll('.slide'));
+  var dotsWrap=document.getElementById('slideDots');
+  var counter=document.getElementById('slideCounter');
+  var prevBtn=document.getElementById('prevSlideBtn');
+  var nextBtn=document.getElementById('nextSlideBtn');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var current=0;
+  var labels=['Overview','The market','Practice','Live coaching','Build it yourself'];
+  slides.forEach(function(s,i){
+    var b=document.createElement('button');
+    b.className='dot-nav'+(i===0?' active':'');
+    b.setAttribute('aria-label','Go to slide '+(i+1)+': '+labels[i]);
+    b.addEventListener('click',function(){ goToSlide(i); });
+    dotsWrap.appendChild(b);
+  });
+  var dots=Array.prototype.slice.call(dotsWrap.children);
+  function pad(n){ return (n<10?'0':'')+n; }
+  function syncUI(){
+    dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
+    counter.textContent=pad(current+1)+' / '+pad(slides.length);
+    prevBtn.disabled=current===0;
+    nextBtn.disabled=current===slides.length-1;
+  }
+  window.goToSlide=function(i){
+    i=Math.max(0,Math.min(slides.length-1,i));
+    deck.scrollTo({top:i*deck.clientHeight, behavior:reduce?'auto':'smooth'});
+  };
+  function currentFromScroll(){
+    var i=Math.round(deck.scrollTop/deck.clientHeight);
+    i=Math.max(0,Math.min(slides.length-1,i));
+    if(i!==current){ current=i; syncUI(); }
+  }
+  var ticking=false;
+  deck.addEventListener('scroll',function(){
+    if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){ currentFromScroll(); ticking=false; });
+  },{passive:true});
+  prevBtn.addEventListener('click',function(){ goToSlide(current-1); });
+  nextBtn.addEventListener('click',function(){ goToSlide(current+1); });
+  document.addEventListener('keydown',function(e){
+    var t=e.target;
+    if(t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]')) return;
+    if(e.key==='ArrowDown'||e.key==='PageDown'){ e.preventDefault(); goToSlide(current+1); }
+    else if(e.key==='ArrowUp'||e.key==='PageUp'){ e.preventDefault(); goToSlide(current-1); }
+    else if(e.key==='Home'){ e.preventDefault(); goToSlide(0); }
+    else if(e.key==='End'){ e.preventDefault(); goToSlide(slides.length-1); }
+    else if(e.key===' ' && t===document.body){ e.preventDefault(); goToSlide(current+1); }
+  });
+  window.addEventListener('resize',function(){ currentFromScroll(); });
+  syncUI();
+})();
+</script>
+
+<script>
+/* Start the embedded ElevenLabs coach from any button on the page */
+function startLiveCoach(){
+  var widget=document.getElementById('liveCoachWidget');
+  if(widget && typeof widget.startConversation==='function'){
+    try{ widget.startConversation(); return; }catch(e){ /* fall through to hint */ }
+  }
+  toast('Tap the call button at the bottom-left of the page to start the live coach');
+}
+window.startLiveCoach=startLiveCoach;
+</script>
+
+<!-- ElevenLabs Conversational AI — live coach, embedded on this page -->
+<elevenlabs-convai id="liveCoachWidget" agent-id="agent_6901m72efzwhff4s8tsx9c9rcna7"></elevenlabs-convai>
+<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+</body>
+</html>
